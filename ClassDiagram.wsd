@@ -1,0 +1,95 @@
+@startuml 'ChessFor2'
+
+skinparam Linetype ortho
+
+title 'ChessFor2'
+
+package Enums {
+enum Player{
+    PLAYER1
+    PLAYER2
+}
+
+enum TileStatus {
+    IDLE
+    PIECE_SELECTED
+    PIECE_MOVEMENT
+}
+
+enum PieceColor {
+    WHITE
+    BLACK
+}
+
+enum PieceType {
+    TOWER
+    HORSE
+    BISHOP
+    QUEEN
+    KING
+    PAWN
+}
+}
+
+class ChessFor2 {
+    - currentPlayer : PlayerId
+    + positionClicked(p:Position)
+    + gameExit()
+}
+
+class Tile {
+    - status : TileStatus
+    - color : TileColor
+    + Tile(c:TileColor)
+    + setStatus(s:TileStatus)
+    + setPiece(p:Piece)
+    + clear()
+    + getPiece() : Piece
+}
+Tile "1" -- "0..1" Piece
+
+class ChessBoard {
+    + setActivePiece(p:Piece)
+    + getPieceType(p:Position) : PieceType
+}
+ChessFor2 "1" -right- "1" ChessBoard
+ChessBoard "1" -- "64" Tile
+ChessBoard "1" -- "0..1" Position : -tileSelected
+
+interface IUserIO {
+    # displayBoard(b : ChessBoard)
+    # startInputCapture()
+}
+ChessFor2 "1" -- "1" IUserIO
+
+package GUI {
+class Gui {
+    + displayBoard()
+    + startInputCapture()
+}
+IUserIO <|-- Gui
+class GuiRenderer
+Gui "1" - "1" GuiRenderer
+class GuiInput
+Gui "1" -left "1" GuiInput
+GuiInput ..> ChessFor2
+}
+
+abstract Piece {
+    # color : PieceColor
+    # type : PieceType
+    + getMoves(p:Position) : vector<Moves>
+}
+
+class Position {
+    - row : Integer
+    - col : Integer
+    + Position(row:Integer, col:Integer)
+    + getRow() : Integer
+    + getCol() : Integer
+}
+
+ChessFor2 ..> Position
+
+
+@enduml
