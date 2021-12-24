@@ -1,0 +1,4 @@
+#define ChessFor2_VERSION_MAJOR @ChessFor2_VERSION_MAJOR@
+#define ChessFor2_VERSION_MINOR @ChessFor2_VERSION_MINOR@
+#define ChessFor2_VERSION_PATCH @ChessFor2_VERSION_PATCH@
+
