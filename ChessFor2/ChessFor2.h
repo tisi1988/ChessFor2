@@ -22,6 +22,6 @@ public:
 
 private:
     std::unique_ptr<IUserIO> m_io;
-    ChessBoard m_board;
+    std::unique_ptr<ChessBoard> m_board;
     PlayerId m_currentPlayer{PlayerId::PLAYER1};
 };

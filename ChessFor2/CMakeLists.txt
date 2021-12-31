@@ -8,7 +8,7 @@ file(GLOB_RECURSE HEADERS INC_ALL ${CMAKE_SOURCE_DIR}/ChessFor2/*.h)
 
 # add the library target
 add_executable(ChessFor2 ${SOURCEFILES} ${HEADERS})
-target_link_libraries(ChessFor2 SDL2)
+target_link_libraries(ChessFor2 SDL2 pthread)
 
 include_directories("${CMAKE_BINARY_DIR}/include")
 
