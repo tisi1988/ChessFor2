@@ -1,6 +1,7 @@
 #pragma once
 
 extern "C" {
+#include <SDL_render.h>
 #include <SDL_video.h>
 }
 
@@ -12,10 +13,9 @@ class ChessBoard;
 
 class GuiRenderer {
 public:
-  GuiRenderer();
+  GuiRenderer(SDL_Window *window, SDL_Renderer *sdlRenderer);
   ~GuiRenderer();
 
-  SDL_Window *getBoardWindow() const;
   int getOffsetX() const;
   int getOffsetY() const;
   int getTileSize() const;
@@ -29,6 +29,7 @@ private:
   void updateDimensions();
 
   SDL_Window *m_window{nullptr};
+  SDL_Renderer *m_sdlRenderer{nullptr};
 
   ChessBoard *m_board{nullptr};
   std::mutex m_boardMutex;

@@ -2,24 +2,10 @@
 
 #include "ChessBoard.h"
 
-extern "C" {
-#include <SDL_render.h>
-}
-
 #include <stdexcept>
 
-GuiRenderer::GuiRenderer() {
-  static constexpr int DEFAULT_WIDTH = 600;
-  static constexpr int DEFAULT_HEIGHT = 600;
-
-  m_window = SDL_CreateWindow(
-      "ChessFor2",                                    // Title
-      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, // Position
-      DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
-  if (!m_window) {
-    throw std::runtime_error("Could not create the window");
-  }
-
+GuiRenderer::GuiRenderer(SDL_Window *window, SDL_Renderer *sdlRenderer)
+    : m_window(window), m_sdlRenderer(sdlRenderer) {
   m_renderThread = std::thread(&GuiRenderer::drawChessBoard, this);
 }
 
@@ -27,8 +13,6 @@ GuiRenderer::~GuiRenderer() {
   m_running = false;
   m_renderThread.join();
 }
-
-SDL_Window *GuiRenderer::getBoardWindow() const { return m_window; }
 
 int GuiRenderer::getOffsetX() const { return m_offsetX; }
 
@@ -100,15 +84,10 @@ void GuiRenderer::updateDimensions() {
 void GuiRenderer::drawChessBoard() {
   auto constexpr FPS{30};
 
-  // We must call SDL_CreateRenderer in order for draw calls to affect this
-  // window.
-  auto sdlRenderer = SDL_CreateRenderer(
-      m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
   while (m_running) {
-    clearScreen(sdlRenderer);
+    clearScreen(m_sdlRenderer);
     updateDimensions();
-    drawBackgorund(sdlRenderer, m_offsetX, m_offsetY, m_tileSize);
+    drawBackgorund(m_sdlRenderer, m_offsetX, m_offsetY, m_tileSize);
 
     {
       std::lock_guard<std::mutex> l(m_boardMutex);
@@ -116,7 +95,7 @@ void GuiRenderer::drawChessBoard() {
     }
 
     // Update the screen
-    SDL_RenderPresent(sdlRenderer);
+    SDL_RenderPresent(m_sdlRenderer);
 
     // Sleep
     std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});
