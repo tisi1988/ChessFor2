@@ -4,10 +4,10 @@
 #include <functional>
 #include <thread>
 
-class GuiInput {
+class GuiInputHelper {
 public:
-  GuiInput(std::function<void(int, int)> clickCb, std::function<void()> exitCb);
-  ~GuiInput();
+  GuiInputHelper(std::function<void(int, int)> clickCb, std::function<void()> exitCb);
+  ~GuiInputHelper();
 
 private:
   void inputLoop();

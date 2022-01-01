@@ -1,26 +1,31 @@
-#include "GuiRenderer.h"
+#include "GuiRenderHelper.h"
 
 #include "ChessBoard.h"
 
-#include <stdexcept>
-
-GuiRenderer::GuiRenderer(SDL_Window *window, SDL_Renderer *sdlRenderer)
-    : m_window(window), m_sdlRenderer(sdlRenderer) {
-  m_renderThread = std::thread(&GuiRenderer::drawChessBoard, this);
+extern "C" {
+#include <SDL_render.h>
+#include <SDL_video.h>
 }
 
-GuiRenderer::~GuiRenderer() {
+#include <stdexcept>
+
+GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *sdlRenderer)
+    : m_window(window), m_sdlRenderer(sdlRenderer) {
+  m_renderThread = std::thread(&GuiRenderHelper::drawChessBoard, this);
+}
+
+GuiRenderHelper::~GuiRenderHelper() {
   m_running = false;
   m_renderThread.join();
 }
 
-int GuiRenderer::getOffsetX() const { return m_offsetX; }
+int GuiRenderHelper::getOffsetX() const { return m_offsetX; }
 
-int GuiRenderer::getOffsetY() const { return m_offsetY; }
+int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
 
-int GuiRenderer::getTileSize() const { return m_tileSize; }
+int GuiRenderHelper::getTileSize() const { return m_tileSize; }
 
-void GuiRenderer::setBoard(ChessBoard *board) {
+void GuiRenderHelper::setBoard(ChessBoard *board) {
   std::lock_guard<std::mutex> l(m_boardMutex);
   m_board = board;
 }
@@ -63,7 +68,7 @@ void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
   }
 }
 
-void GuiRenderer::updateDimensions() {
+void GuiRenderHelper::updateDimensions() {
   int w, h;
   SDL_GetWindowSize(m_window, &w, &h);
 
@@ -81,7 +86,7 @@ void GuiRenderer::updateDimensions() {
   m_offsetY = (m_windowH - minSize) / 2;
 }
 
-void GuiRenderer::drawChessBoard() {
+void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
   while (m_running) {

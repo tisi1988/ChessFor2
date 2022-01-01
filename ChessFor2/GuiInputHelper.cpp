@@ -1,4 +1,4 @@
-#include "GuiInput.h"
+#include "GuiInputHelper.h"
 
 extern "C" {
 #include <SDL_events.h>
@@ -6,8 +6,8 @@ extern "C" {
 
 #include <iostream>
 
-GuiInput::GuiInput(std::function<void(int, int)> clickCb,
-                   std::function<void()> exitCb)
+GuiInputHelper::GuiInputHelper(std::function<void(int, int)> clickCb,
+                               std::function<void()> exitCb)
     : m_clickPositionCallback(clickCb), m_gameExitCallback(exitCb) {
   if (!m_clickPositionCallback)
     throw std::runtime_error("Click callback is not set");
@@ -15,15 +15,15 @@ GuiInput::GuiInput(std::function<void(int, int)> clickCb,
   if (!m_gameExitCallback)
     throw std::runtime_error("Quit Callback is not set");
 
-  m_inputThread = std::thread(&GuiInput::inputLoop, this);
+  m_inputThread = std::thread(&GuiInputHelper::inputLoop, this);
 }
 
-GuiInput::~GuiInput() {
+GuiInputHelper::~GuiInputHelper() {
   m_running = false;
   m_inputThread.join();
 }
 
-void GuiInput::inputLoop() {
+void GuiInputHelper::inputLoop() {
   SDL_Event event;
 
   while (m_running) {

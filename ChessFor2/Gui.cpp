@@ -68,24 +68,29 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
    * The event handling and drawing loops can then be run in
    * separate threads.
    */
-  auto window = createWindow();
-  auto renderer = createRenderer(window);
+  m_window = createWindow();
+  m_renderer = createRenderer(m_window);
 
-  m_render = std::make_unique<GuiRenderer>(window, renderer);
+  m_render = std::make_unique<GuiRenderHelper>(m_window, m_renderer);
 
-  auto rawClickCb = [this, window, tileClickCb](int x, int y) {
+  auto rawClickCb = [this, tileClickCb](int x, int y) {
     // X & Y coordinated are in screen domain, they must be mapped
     // to a tile
-    auto [clickX, clickY] = screenToWindowCoordinates(window, x, y);
+    auto [clickX, clickY] = screenToWindowCoordinates(m_window, x, y);
     auto [tileCol, tileRow] = windowCoordinateToTile(
-        window, m_render->getTileSize(), m_render->getOffsetX(),
+        m_window, m_render->getTileSize(), m_render->getOffsetX(),
         m_render->getOffsetY(), clickX, clickY);
     if (tileRow >= 0 && tileCol >= 0) {
       tileClickCb(Position(tileRow, tileCol));
     }
   };
 
-  m_input = std::make_unique<GuiInput>(rawClickCb, exitCb);
+  m_input = std::make_unique<GuiInputHelper>(rawClickCb, exitCb);
+}
+
+Gui::~Gui() {
+  SDL_DestroyRenderer(m_renderer);
+  SDL_DestroyWindow(m_window);
 }
 
 void Gui::setBoard(ChessBoard *board) {}

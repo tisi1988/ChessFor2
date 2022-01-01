@@ -1,8 +1,8 @@
 #pragma once
 
 extern "C" {
-#include <SDL_render.h>
-#include <SDL_video.h>
+struct SDL_Window;
+struct SDL_Renderer;
 }
 
 #include <atomic>
@@ -11,10 +11,10 @@ extern "C" {
 
 class ChessBoard;
 
-class GuiRenderer {
+class GuiRenderHelper {
 public:
-  GuiRenderer(SDL_Window *window, SDL_Renderer *sdlRenderer);
-  ~GuiRenderer();
+  GuiRenderHelper(SDL_Window *window, SDL_Renderer *sdlRenderer);
+  ~GuiRenderHelper();
 
   int getOffsetX() const;
   int getOffsetY() const;
