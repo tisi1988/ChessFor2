@@ -21,5 +21,6 @@ ChessFor2::ChessFor2() {
 
 void ChessFor2::run() {
   while (true) {
+    std::this_thread::sleep_for(std::chrono::seconds{1});
   }
 }
