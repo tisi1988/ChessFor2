@@ -11,14 +11,21 @@ std::pair<int, int> screenToWindowCoordinates(SDL_Window *boardWindow, int x,
   return {x - windowX, y - windowY};
 }
 
-std::pair<int, int> windowCoordinateToTile(SDL_Window *boardWindow, int x,
-                                           int y) {
+std::pair<int, int> windowCoordinateToTile(SDL_Window *boardWindow,
+                                           int tileSize, int offsetX,
+                                           int offsetY, int x, int y) {
   int windowW, windowH;
   SDL_GetWindowSize(boardWindow, &windowW, &windowH);
-  // Compute the tile size in pixels
-  int const tileWidth = windowW / 8;
-  int const tileHeight = windowH / 8;
-  return {x / tileWidth, y / tileHeight};
+
+  if (x < offsetX || x > (offsetX + tileSize * 8)) {
+    return {-1, -1};
+  }
+
+  if (y < offsetY || y > (offsetY + tileSize * 8)) {
+    return {-1, -1};
+  }
+
+  return {(x - offsetX) / tileSize, (y - offsetY) / tileSize};
 }
 
 Gui::Gui(std::function<void(Position)> const &tileClickCb,
@@ -34,9 +41,12 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
     // to a tile
     auto [clickX, clickY] =
         screenToWindowCoordinates(m_render->getBoardWindow(), x, y);
-    auto [tileCol, tileRow] =
-        windowCoordinateToTile(m_render->getBoardWindow(), clickX, clickY);
-    tileClickCb(Position(tileRow, tileCol));
+    auto [tileCol, tileRow] = windowCoordinateToTile(
+        m_render->getBoardWindow(), m_render->getTileSize(),
+        m_render->getOffsetX(), m_render->getOffsetY(), clickX, clickY);
+    if (tileRow >= 0 && tileCol >= 0) {
+      tileClickCb(Position(tileRow, tileCol));
+    }
   };
 
   m_input = std::make_unique<GuiInput>(rawClickCb, exitCb);

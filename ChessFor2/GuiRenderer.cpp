@@ -30,6 +30,12 @@ GuiRenderer::~GuiRenderer() {
 
 SDL_Window *GuiRenderer::getBoardWindow() const { return m_window; }
 
+int GuiRenderer::getOffsetX() const { return m_offsetX; }
+
+int GuiRenderer::getOffsetY() const { return m_offsetY; }
+
+int GuiRenderer::getTileSize() const { return m_tileSize; }
+
 void GuiRenderer::setBoard(ChessBoard *board) {
   std::lock_guard<std::mutex> l(m_boardMutex);
   m_board = board;

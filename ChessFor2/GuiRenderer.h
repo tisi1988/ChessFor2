@@ -16,6 +16,9 @@ public:
   ~GuiRenderer();
 
   SDL_Window *getBoardWindow() const;
+  int getOffsetX() const;
+  int getOffsetY() const;
+  int getTileSize() const;
 
   void setBoard(ChessBoard *board);
 
