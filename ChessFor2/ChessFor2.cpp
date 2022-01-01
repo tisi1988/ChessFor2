@@ -10,7 +10,7 @@ ChessFor2::ChessFor2() {
           std::cout << "Tile Row=" << p.getRow() << " Col=" << p.getCol()
                     << std::endl;
         },
-        []() { exit(0); });
+        [&flag = m_running]() { flag = false; });
     m_board = std::make_unique<ChessBoard>();
 
     m_io->setBoard(m_board.get());
@@ -20,7 +20,7 @@ ChessFor2::ChessFor2() {
 }
 
 void ChessFor2::run() {
-  while (true) {
+  while (m_running) {
     std::this_thread::sleep_for(std::chrono::seconds{1});
   }
 }

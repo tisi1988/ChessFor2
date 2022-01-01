@@ -89,8 +89,12 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
 }
 
 Gui::~Gui() {
+  m_render = nullptr;
+  m_input = nullptr;
+
   SDL_DestroyRenderer(m_renderer);
   SDL_DestroyWindow(m_window);
+  SDL_Quit();
 }
 
 void Gui::setBoard(ChessBoard *board) {}
