@@ -2,5 +2,5 @@
 
 class ChessBoard {
 public:
-    ChessBoard();
+  ChessBoard();
 };

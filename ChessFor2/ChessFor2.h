@@ -1,8 +1,8 @@
 #pragma once
 
-#include "PlayerId.h"
 #include "ChessBoard.h"
 #include "IUserIO.h"
+#include "PlayerId.h"
 
 #include <memory>
 
@@ -11,17 +11,16 @@
  * of the game. Also is the facade between the UI
  * and the backend.
  */
-class ChessFor2
-{
+class ChessFor2 {
 public:
-    ChessFor2();
-    void run();
+  ChessFor2();
+  void run();
 
-    void positionClicked();
-    void exitGame();
+  void positionClicked();
+  void exitGame();
 
 private:
-    std::unique_ptr<IUserIO> m_io;
-    std::unique_ptr<ChessBoard> m_board;
-    PlayerId m_currentPlayer{PlayerId::PLAYER1};
+  std::unique_ptr<IUserIO> m_io;
+  std::unique_ptr<ChessBoard> m_board;
+  PlayerId m_currentPlayer{PlayerId::PLAYER1};
 };

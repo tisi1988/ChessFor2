@@ -1,13 +1,12 @@
 #pragma once
 
-class Position
-{
+class Position {
 public:
-    Position(int row, int col);
-    int getRow() const;
-    int getCol() const;
+  Position(int row, int col);
+  int getRow() const;
+  int getCol() const;
 
 private:
-    int m_row;
-    int m_col;
+  int m_row;
+  int m_col;
 };

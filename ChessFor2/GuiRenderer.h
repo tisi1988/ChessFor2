@@ -5,30 +5,29 @@ extern "C" {
 }
 
 #include <atomic>
-#include <thread>
 #include <mutex>
+#include <thread>
 
 class ChessBoard;
 
-class GuiRenderer
-{
+class GuiRenderer {
 public:
-    GuiRenderer();
-    ~GuiRenderer();
+  GuiRenderer();
+  ~GuiRenderer();
 
-    SDL_Window* getBoardWindow() const;
+  SDL_Window *getBoardWindow() const;
 
-    void setBoard(ChessBoard* board);
+  void setBoard(ChessBoard *board);
 
 private:
-    std::pair<int, int> getTileDimensions() const;
-    void drawChessBoard();
+  std::pair<int, int> getTileDimensions() const;
+  void drawChessBoard();
 
-    SDL_Window* m_window{nullptr};
+  SDL_Window *m_window{nullptr};
 
-    ChessBoard* m_board{nullptr};
-    std::mutex m_boardMutex;
+  ChessBoard *m_board{nullptr};
+  std::mutex m_boardMutex;
 
-    std::atomic_bool m_running{true};
-    std::thread m_renderThread;
+  std::atomic_bool m_running{true};
+  std::thread m_renderThread;
 };

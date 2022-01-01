@@ -7,6 +7,6 @@
 
 class IUserIO {
 public:
-    virtual void setBoard(ChessBoard* board) = 0;
-    virtual void startInputCapture() = 0;
+  virtual void setBoard(ChessBoard *board) = 0;
+  virtual void startInputCapture() = 0;
 };

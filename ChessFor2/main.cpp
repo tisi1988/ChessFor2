@@ -4,4 +4,3 @@ int main() {
   ChessFor2 game;
   game.run();
 }
-

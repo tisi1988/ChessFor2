@@ -1,6 +1,3 @@
 #pragma once
 
-enum class PlayerId : int {
-    PLAYER1,
-    PLAYER2
-};
+enum class PlayerId : int { PLAYER1, PLAYER2 };
