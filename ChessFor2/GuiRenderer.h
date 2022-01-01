@@ -20,8 +20,10 @@ public:
   void setBoard(ChessBoard *board);
 
 private:
-  std::pair<int, int> getTileDimensions() const;
+  int getTileSideLength() const;
+  std::pair<int, int> getDrawingOffsets() const;
   void drawChessBoard();
+  void updateDimensions();
 
   SDL_Window *m_window{nullptr};
 
@@ -30,4 +32,10 @@ private:
 
   std::atomic_bool m_running{true};
   std::thread m_renderThread;
+
+  int m_windowW{0};
+  int m_windowH{0};
+  int m_tileSize{0};
+  int m_offsetX{0};
+  int m_offsetY{0};
 };

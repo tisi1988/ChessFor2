@@ -55,28 +55,40 @@ void setTileColor(SDL_Renderer *renderer, int row, int col) {
   }
 }
 
-std::pair<int, int> GuiRenderer::getTileDimensions() const {
-  int windowW, windowH;
-  SDL_GetWindowSize(m_window, &windowW, &windowH);
-
-  return {windowW / 8, windowH / 8};
-}
-
-void drawBackgorund(SDL_Renderer *renderer, int tileW, int tileH) {
+void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
+                    int tileSide) {
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
       setTileColor(renderer, row, col);
       // Create the cell rectangle
       SDL_Rect cell_rect;
-      cell_rect.x = col * tileW;
-      cell_rect.y = row * tileH;
-      cell_rect.w = tileW;
-      cell_rect.h = tileH;
+      cell_rect.x = col * tileSide + offsetX;
+      cell_rect.y = row * tileSide + offsetY;
+      cell_rect.w = tileSide;
+      cell_rect.h = tileSide;
 
       // Render our cell through SDL_Rect
       SDL_RenderFillRect(renderer, &cell_rect);
     }
   }
+}
+
+void GuiRenderer::updateDimensions() {
+  int w, h;
+  SDL_GetWindowSize(m_window, &w, &h);
+
+  if (w == m_windowW && h == m_windowH) {
+    return;
+  }
+
+  m_windowW = w;
+  m_windowH = h;
+
+  int const minSize = std::min(m_windowW, m_windowH);
+
+  m_tileSize = minSize / 8;
+  m_offsetX = (m_windowW - minSize) / 2;
+  m_offsetY = (m_windowH - minSize) / 2;
 }
 
 void GuiRenderer::drawChessBoard() {
@@ -89,8 +101,8 @@ void GuiRenderer::drawChessBoard() {
 
   while (m_running) {
     clearScreen(sdlRenderer);
-    auto [tileW, tileH] = getTileDimensions();
-    drawBackgorund(sdlRenderer, tileW, tileH);
+    updateDimensions();
+    drawBackgorund(sdlRenderer, m_offsetX, m_offsetY, m_tileSize);
 
     {
       std::lock_guard<std::mutex> l(m_boardMutex);
