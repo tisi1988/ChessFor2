@@ -1,7 +1,8 @@
 #include "ChessFor2.h"
-#include "Gui.h"
+#include "gui/Gui.h"
 
 #include <iostream>
+#include <thread>
 
 ChessFor2::ChessFor2() {
   try {

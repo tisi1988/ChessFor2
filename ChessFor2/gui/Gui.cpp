@@ -1,9 +1,13 @@
 #include "Gui.h"
 
-#include "SDL.h"
+#include "GuiInputHelper.h"
+#include "GuiRenderHelper.h"
 
-#include <iostream>
+extern "C" {
+#include <SDL.h>
+}
 
+namespace {
 std::pair<int, int> screenToWindowCoordinates(SDL_Window *boardWindow, int x,
                                               int y) {
   int windowX, windowY;
@@ -29,12 +33,12 @@ std::pair<int, int> windowCoordinateToTile(SDL_Window *boardWindow,
 }
 
 SDL_Window *createWindow() {
-  static constexpr int DEFAULT_WIDTH = 600;
-  static constexpr int DEFAULT_HEIGHT = 600;
+  static constexpr int DEFAULT_WIDTH{600};
+  static constexpr int DEFAULT_HEIGHT{600};
+  static constexpr char const *WINDOW_TITLE{"ChessFor2"};
 
   auto window = SDL_CreateWindow(
-      "ChessFor2",                                    // Title
-      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, // Position
+      WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
       DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
   if (!window) {
     throw std::runtime_error("Could not create the window");
@@ -52,6 +56,7 @@ SDL_Renderer *createRenderer(SDL_Window *w) {
 
   return sdlRenderer;
 }
+}; // namespace
 
 Gui::Gui(std::function<void(Position)> const &tileClickCb,
          std::function<void()> const &exitCb) {
@@ -74,8 +79,8 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
   m_render = std::make_unique<GuiRenderHelper>(m_window, m_renderer);
 
   auto rawClickCb = [this, tileClickCb](int x, int y) {
-    // X & Y coordinated are in screen domain, they must be mapped
-    // to a tile
+    // X & Y coordinates are in screen domain, they must be mapped
+    // to a tile before calling back
     auto [clickX, clickY] = screenToWindowCoordinates(m_window, x, y);
     auto [tileCol, tileRow] = windowCoordinateToTile(
         m_window, m_render->getTileSize(), m_render->getOffsetX(),
@@ -97,6 +102,4 @@ Gui::~Gui() {
   SDL_Quit();
 }
 
-void Gui::setBoard(ChessBoard *board) {}
-
-void Gui::startInputCapture() {}
+void Gui::setBoard(ChessBoard *board) { m_render->setBoard(board); }
