@@ -1,14 +1,18 @@
 #pragma once
 
-#include "ChessBoard.h"
-#include "Position.h"
+class ChessBoard;
 
-#include <functional>
-
+/**
+ * @brief The IUserIO class defines the methods the
+ * UI should implement.
+ */
 class IUserIO {
 public:
   virtual ~IUserIO() {}
 
+  /**
+   * @brief Set a nerw board data to be displayed.
+   * @param board The new chessboard data.
+   */
   virtual void setBoard(ChessBoard *board) = 0;
-  virtual void startInputCapture() = 0;
 };

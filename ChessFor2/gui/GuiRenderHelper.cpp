@@ -1,35 +1,14 @@
 #include "GuiRenderHelper.h"
 
-#include "ChessBoard.h"
+#include "../ChessBoard.h"
 
 extern "C" {
 #include <SDL_render.h>
-#include <SDL_video.h>
 }
 
 #include <stdexcept>
 
-GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *sdlRenderer)
-    : m_window(window), m_sdlRenderer(sdlRenderer) {
-  m_renderThread = std::thread(&GuiRenderHelper::drawChessBoard, this);
-}
-
-GuiRenderHelper::~GuiRenderHelper() {
-  m_running = false;
-  m_renderThread.join();
-}
-
-int GuiRenderHelper::getOffsetX() const { return m_offsetX; }
-
-int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
-
-int GuiRenderHelper::getTileSize() const { return m_tileSize; }
-
-void GuiRenderHelper::setBoard(ChessBoard *board) {
-  std::lock_guard<std::mutex> l(m_boardMutex);
-  m_board = board;
-}
-
+namespace {
 void clearScreen(SDL_Renderer *renderer) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   // Clear the entire screen to our selected color.
@@ -38,15 +17,15 @@ void clearScreen(SDL_Renderer *renderer) {
 
 void setTileColor(SDL_Renderer *renderer, int row, int col) {
   // 0 for dark tile, 1 for light tile
-  int tileColor = 1;
+  bool lightColor{true};
   if ((row % 2 == 0 && col % 2 == 0) || (row % 2 != 0 && col % 2 != 0)) {
-    tileColor = 0;
+    lightColor = false;
   }
 
-  if (tileColor == 0) {
-    SDL_SetRenderDrawColor(renderer, 128, 128, 128, SDL_ALPHA_OPAQUE);
-  } else {
+  if (lightColor) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+  } else {
+    SDL_SetRenderDrawColor(renderer, 128, 128, 128, SDL_ALPHA_OPAQUE);
   }
 }
 
@@ -66,6 +45,28 @@ void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
       SDL_RenderFillRect(renderer, &cell_rect);
     }
   }
+}
+}; // namespace
+
+GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer)
+    : m_window(window), m_renderer(renderer) {
+  m_renderThread = std::thread(&GuiRenderHelper::drawChessBoard, this);
+}
+
+GuiRenderHelper::~GuiRenderHelper() {
+  m_running = false;
+  m_renderThread.join();
+}
+
+int GuiRenderHelper::getOffsetX() const { return m_offsetX; }
+
+int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
+
+int GuiRenderHelper::getTileSize() const { return m_tileSize; }
+
+void GuiRenderHelper::setBoard(ChessBoard *board) {
+  std::lock_guard<std::mutex> l(m_boardMutex);
+  m_board = board;
 }
 
 void GuiRenderHelper::updateDimensions() {
@@ -90,9 +91,9 @@ void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
   while (m_running) {
-    clearScreen(m_sdlRenderer);
+    clearScreen(m_renderer);
     updateDimensions();
-    drawBackgorund(m_sdlRenderer, m_offsetX, m_offsetY, m_tileSize);
+    drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
 
     {
       std::lock_guard<std::mutex> l(m_boardMutex);
@@ -100,7 +101,7 @@ void GuiRenderHelper::drawChessBoard() {
     }
 
     // Update the screen
-    SDL_RenderPresent(m_sdlRenderer);
+    SDL_RenderPresent(m_renderer);
 
     // Sleep
     std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});

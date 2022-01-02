@@ -34,7 +34,7 @@ enum PieceType {
 class ChessFor2 {
     - currentPlayer : PlayerId
     + positionClicked(p:Position)
-    + gameExit()
+    + exitGame()
 }
 
 class Tile {
@@ -57,22 +57,30 @@ ChessBoard "1" -- "64" Tile
 ChessBoard "1" -- "0..1" Position : -tileSelected
 
 interface IUserIO {
-    # displayBoard(b : ChessBoard)
+    # setBoard(b : ChessBoard)
     # startInputCapture()
 }
 ChessFor2 "1" -- "1" IUserIO
 
 package GUI {
 class Gui {
-    + displayBoard()
+    + Gui(tileClickCb : Function, exitCb : Function);
+    + setBoard(b : ChessBoard)
     + startInputCapture()
 }
 IUserIO <|-- Gui
-class GuiRenderer
-Gui "1" - "1" GuiRenderer
-class GuiInput
-Gui "1" -left "1" GuiInput
-GuiInput ..> ChessFor2
+class GuiRenderHelper {
+    + getOffsetX() : Integer
+    + getOffsetY() : Integer
+    + getTileSize() : Integer
+    + setBoard(b : ChessBoard)
+}
+Gui "1" - "1" GuiRenderHelper
+class GuiInputHelper {
+    + GuiInputHelper(tileClickCb : Function, exitCb : Function)
+    - inputLoop()
+}
+Gui "1" -left "1" GuiInputHelper
 }
 
 abstract Piece {
