@@ -3,6 +3,8 @@
 #include "Position.h"
 #include "Tile.h"
 
+#include <mutex>
+
 class ChessBoard {
 public:
   ChessBoard();
@@ -12,5 +14,6 @@ public:
 private:
   void initializePieces();
 
+  mutable std::mutex m_tilesMutex;
   Tile m_tiles[8][8];
 };

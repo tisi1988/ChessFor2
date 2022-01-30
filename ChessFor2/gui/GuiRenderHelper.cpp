@@ -94,10 +94,7 @@ int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
 
 int GuiRenderHelper::getTileSize() const { return m_tileSize; }
 
-void GuiRenderHelper::setBoard(ChessBoard *board) {
-  std::lock_guard<std::mutex> l(m_boardMutex);
-  m_board = board;
-}
+void GuiRenderHelper::setBoard(ChessBoard *board) { m_board = board; }
 
 void GuiRenderHelper::updateDimensions() {
   int w, h;
@@ -121,20 +118,17 @@ void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
   while (m_running) {
-    clearScreen(m_renderer);
-    updateDimensions();
-    drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
+    if (m_board) {
+      clearScreen(m_renderer);
+      updateDimensions();
+      drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
 
-    {
-      std::lock_guard<std::mutex> l(m_boardMutex);
-      if (m_board) {
-        drawPieces(m_renderer, m_imgLoader.get(), m_board, m_offsetX, m_offsetY,
-                   m_tileSize);
-      }
+      drawPieces(m_renderer, m_imgLoader.get(), m_board, m_offsetX, m_offsetY,
+                 m_tileSize);
+
+      // Update the screen
+      SDL_RenderPresent(m_renderer);
     }
-
-    // Update the screen
-    SDL_RenderPresent(m_renderer);
 
     // Sleep
     std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});

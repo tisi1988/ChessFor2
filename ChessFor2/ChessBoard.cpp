@@ -6,6 +6,7 @@
 ChessBoard::ChessBoard() { initializePieces(); }
 
 Tile ChessBoard::getTile(Position const &pos) const {
+  std::lock_guard<std::mutex> l(m_tilesMutex);
   return Tile(m_tiles[pos.getX()][pos.getY()]);
 }
 

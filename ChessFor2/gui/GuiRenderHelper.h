@@ -3,7 +3,6 @@
 #include "PieceImgLoader.h"
 
 #include <atomic>
-#include <mutex>
 #include <thread>
 
 class ChessBoard;
@@ -63,7 +62,6 @@ private:
   SDL_Renderer *m_renderer{nullptr};
 
   ChessBoard *m_board{nullptr};
-  std::mutex m_boardMutex;
 
   std::atomic_bool m_running{true};
   std::thread m_renderThread;

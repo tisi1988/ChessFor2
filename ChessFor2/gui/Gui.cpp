@@ -3,6 +3,8 @@
 #include "GuiInputHelper.h"
 #include "GuiRenderHelper.h"
 
+#include <stdexcept>
+
 extern "C" {
 #include <SDL.h>
 }
