@@ -16,12 +16,33 @@
  */
 class ChessFor2 {
 public:
+  /**
+   * @brief ChessFor2 class constructor.
+   */
   ChessFor2();
 
+  /**
+   * @brief It runs the game. This call is blocking
+   * till the game exits.
+   */
   void run();
 
+  /**
+   * @brief Triggers the game exit and unlocks run() caller.
+   */
   void exit();
+
+  /**
+   * @brief Notifies a Tile that's has been clicked.
+   * @param p Position of the Tile clicked.
+   */
   void tileClicked(Position const &p);
+
+  /**
+   * @brief Retusn a Tile fro a given position.
+   * @param pos The position of the requested Tile.
+   * @return the Tile on the given position.
+   */
   Tile getTile(Position const &pos) const;
 
 private:

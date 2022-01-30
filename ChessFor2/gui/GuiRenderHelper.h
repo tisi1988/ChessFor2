@@ -23,6 +23,7 @@ public:
    * @brief GuiRenderHelper constructor.
    * @param window The window to draw to.
    * @param renderer The renderer to use.
+   * @param game The game instance.
    */
   GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer, ChessFor2 *game);
   ~GuiRenderHelper();
