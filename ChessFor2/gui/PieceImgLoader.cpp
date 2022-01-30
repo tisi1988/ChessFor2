@@ -22,34 +22,34 @@ Position PieceImgLoader::getPieceTextureCoordinate(PieceType type,
   // Black  x=208*i y=213
 
   int const offsetY = color == PieceColor::WHITE ? 0 : 213;
-  int offsetX_miltiplier;
+  int offsetX_multiplier;
 
   switch (type) {
   case PieceType::QUEEN:
-    offsetX_miltiplier = 1;
+    offsetX_multiplier = 1;
     break;
   case PieceType::BISHOP:
-    offsetX_miltiplier = 2;
+    offsetX_multiplier = 2;
     break;
   case PieceType::HORSE:
-    offsetX_miltiplier = 3;
+    offsetX_multiplier = 3;
     break;
   case PieceType::TOWER:
-    offsetX_miltiplier = 4;
+    offsetX_multiplier = 4;
     break;
   case PieceType::PAWN:
-    offsetX_miltiplier = 5;
+    offsetX_multiplier = 5;
     break;
   case PieceType::KING:
     [[fallthrough]];
   case PieceType::NONE:
     [[fallthrough]];
   default:
-    offsetX_miltiplier = 0;
+    offsetX_multiplier = 0;
     break;
   }
 
-  return {offsetX_miltiplier * 208 + 20, offsetY};
+  return {offsetX_multiplier * 213, offsetY};
 }
 
 SDL_Texture *PieceImgLoader::getPiecesTexture() const { return m_texture; }
