@@ -8,7 +8,7 @@ ChessFor2::ChessFor2() {
   try {
     m_io = std::make_unique<Gui>(
         [](Position const &p) {
-          std::cout << "Tile Row=" << p.getRow() << " Col=" << p.getCol()
+          std::cout << "Tile Row=" << p.getX() << " Col=" << p.getY()
                     << std::endl;
         },
         [&flag = m_running]() { flag = false; });

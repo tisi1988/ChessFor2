@@ -3,10 +3,10 @@
 class Position {
 public:
   Position(int row, int col);
-  int getRow() const;
-  int getCol() const;
+  int getX() const;
+  int getY() const;
 
 private:
-  int m_row;
-  int m_col;
+  int m_x;
+  int m_y;
 };

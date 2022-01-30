@@ -1,7 +1,7 @@
 #include "Position.h"
 
-Position::Position(int row, int col) : m_row(row), m_col(col) {}
+Position::Position(int row, int col) : m_x(row), m_y(col) {}
 
-int Position::getRow() const { return m_row; }
+int Position::getX() const { return m_x; }
 
-int Position::getCol() const { return m_col; }
+int Position::getY() const { return m_y; }
