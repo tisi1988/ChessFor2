@@ -6,6 +6,7 @@ extern "C" {
 #include <SDL_render.h>
 }
 
+#include <iostream>
 #include <stdexcept>
 
 namespace {
@@ -56,7 +57,12 @@ void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
   // Black  x=208*i y=213
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      Piece const piece = game->getTile(Position(row, col)).getPiece();
+      Piece piece;
+      try {
+        piece = game->getTile(Position(row, col)).getPiece();
+      } catch (std::runtime_error const &e) {
+        throw;
+      }
 
       if (piece.getType() == PieceType::NONE) {
         continue;
@@ -116,18 +122,24 @@ void GuiRenderHelper::updateDimensions() {
 void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
-  while (m_running) {
-    clearScreen(m_renderer);
-    updateDimensions();
-    drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
+  try {
+    while (m_running) {
+      clearScreen(m_renderer);
+      updateDimensions();
+      drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
 
-    drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
-               m_tileSize);
+      drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
+                 m_tileSize);
 
-    // Update the screen
-    SDL_RenderPresent(m_renderer);
+      // Update the screen
+      SDL_RenderPresent(m_renderer);
 
-    // Sleep
-    std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});
+      // Sleep
+      std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});
+    }
+  } catch (std::runtime_error const &e) {
+    std::cout << std::string("Error while drawing ") + e.what();
+  } catch (...) {
+    std::cout << "Unknown error while drawing";
   }
 }

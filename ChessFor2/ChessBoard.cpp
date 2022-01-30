@@ -6,6 +6,12 @@
 ChessBoard::ChessBoard() { initializePieces(); }
 
 Tile ChessBoard::getTile(Position const &pos) const {
+  if (pos.getX() < 0 || pos.getX() >= BOARD_SIZE_TILES || pos.getY() < 0 ||
+      pos.getY() > BOARD_SIZE_TILES) {
+    throw std::runtime_error("Invalid coordinate getting a Tile: " +
+                             pos.toString());
+  }
+
   std::lock_guard<std::mutex> l(m_tilesMutex);
   return Tile(m_tiles[pos.getX()][pos.getY()]);
 }
