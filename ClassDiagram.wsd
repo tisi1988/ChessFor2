@@ -55,24 +55,23 @@ ChessFor2 "1" -right- "1" ChessBoard
 ChessBoard "1" -- "64" Tile
 ChessBoard "1" -- "0..1" Position : -tileSelected
 
-interface IUserIO {
-    # setBoard(b : ChessBoard)
-    # startInputCapture()
+class BaseUserIO {
+    + BaseUserIO(game : ChessFor2)
 }
-ChessFor2 "1" -- "1" IUserIO
+ChessFor2 "1" -- "1" BaseUserIO
 
 package GUI {
 class Gui {
-    + Gui(tileClickCb : Function, exitCb : Function);
-    + setBoard(b : ChessBoard)
+    + Gui(game : ChessFor2)
     + startInputCapture()
 }
-IUserIO <|-- Gui
+BaseUserIO <|-- Gui
+
 class GuiRenderHelper {
+    + GuiRenderHelper(window : Window, renderer : Renderer, game : ChessFor2)
     + getOffsetX() : Integer
     + getOffsetY() : Integer
     + getTileSize() : Integer
-    + setBoard(b : ChessBoard)
 }
 Gui "1" - "1" GuiRenderHelper
 class GuiInputHelper {
@@ -89,11 +88,11 @@ abstract Piece {
 }
 
 class Position {
-    - row : Integer
-    - col : Integer
+    - x : Integer
+    - y : Integer
     + Position(row:Integer, col:Integer)
-    + getRow() : Integer
-    + getCol() : Integer
+    + getX() : Integer
+    + getY() : Integer
 }
 
 ChessFor2 ..> Position

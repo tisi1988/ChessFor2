@@ -3,6 +3,8 @@
 #include "GuiInputHelper.h"
 #include "GuiRenderHelper.h"
 
+#include "../ChessFor2.h"
+
 #include <stdexcept>
 
 extern "C" {
@@ -60,8 +62,7 @@ SDL_Renderer *createRenderer(SDL_Window *w) {
 }
 }; // namespace
 
-Gui::Gui(std::function<void(Position)> const &tileClickCb,
-         std::function<void()> const &exitCb) {
+Gui::Gui(ChessFor2 *game) : BaseUserIO(game) {
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
     throw std::runtime_error("Error initialising SDL2");
   }
@@ -78,9 +79,9 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
   m_window = createWindow();
   m_renderer = createRenderer(m_window);
 
-  m_render = std::make_unique<GuiRenderHelper>(m_window, m_renderer);
+  m_render = std::make_unique<GuiRenderHelper>(m_window, m_renderer, game);
 
-  auto rawClickCb = [this, tileClickCb](int x, int y) {
+  auto rawClickCb = [this, game](int x, int y) {
     // X & Y coordinates are in screen domain, they must be mapped
     // to a tile before calling back
     auto [clickX, clickY] = screenToWindowCoordinates(m_window, x, y);
@@ -88,11 +89,12 @@ Gui::Gui(std::function<void(Position)> const &tileClickCb,
         m_window, m_render->getTileSize(), m_render->getOffsetX(),
         m_render->getOffsetY(), clickX, clickY);
     if (tileRow >= 0 && tileCol >= 0) {
-      tileClickCb(Position(tileRow, tileCol));
+      game->tileClicked(Position(tileRow, tileCol));
     }
   };
 
-  m_input = std::make_unique<GuiInputHelper>(rawClickCb, exitCb);
+  m_input = std::make_unique<GuiInputHelper>(
+      rawClickCb, std::bind(&ChessFor2::exit, m_game));
 }
 
 Gui::~Gui() {
@@ -103,5 +105,3 @@ Gui::~Gui() {
   SDL_DestroyWindow(m_window);
   SDL_Quit();
 }
-
-void Gui::setBoard(ChessBoard *board) { m_render->setBoard(board); }

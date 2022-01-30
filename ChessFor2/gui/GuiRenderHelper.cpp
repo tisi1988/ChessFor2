@@ -1,6 +1,6 @@
 #include "GuiRenderHelper.h"
 
-#include "../ChessBoard.h"
+#include "../ChessFor2.h"
 
 extern "C" {
 #include <SDL_render.h>
@@ -48,7 +48,7 @@ void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
 }
 
 void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
-                ChessBoard *board, int offsetX, int offsetY, int tileSide) {
+                ChessFor2 *game, int offsetX, int offsetY, int tileSide) {
   int const pieceWidth = imgLoader->getPieceWidth();
   int const pieceHeight = imgLoader->getPieceHeight();
 
@@ -56,7 +56,7 @@ void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
   // Black  x=208*i y=213
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      Piece const piece = board->getTile(Position(row, col)).getPiece();
+      Piece const piece = game->getTile(Position(row, col)).getPiece();
 
       if (piece.getType() == PieceType::NONE) {
         continue;
@@ -77,8 +77,9 @@ void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
 }
 }; // namespace
 
-GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer)
-    : m_window(window), m_renderer(renderer),
+GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer,
+                                 ChessFor2 *game)
+    : m_window(window), m_renderer(renderer), m_game(game),
       m_imgLoader(std::make_unique<PieceImgLoader>(renderer)) {
   m_renderThread = std::thread(&GuiRenderHelper::drawChessBoard, this);
 }
@@ -93,8 +94,6 @@ int GuiRenderHelper::getOffsetX() const { return m_offsetX; }
 int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
 
 int GuiRenderHelper::getTileSize() const { return m_tileSize; }
-
-void GuiRenderHelper::setBoard(ChessBoard *board) { m_board = board; }
 
 void GuiRenderHelper::updateDimensions() {
   int w, h;
@@ -118,17 +117,15 @@ void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
   while (m_running) {
-    if (m_board) {
-      clearScreen(m_renderer);
-      updateDimensions();
-      drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
+    clearScreen(m_renderer);
+    updateDimensions();
+    drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
 
-      drawPieces(m_renderer, m_imgLoader.get(), m_board, m_offsetX, m_offsetY,
-                 m_tileSize);
+    drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
+               m_tileSize);
 
-      // Update the screen
-      SDL_RenderPresent(m_renderer);
-    }
+    // Update the screen
+    SDL_RenderPresent(m_renderer);
 
     // Sleep
     std::this_thread::sleep_for(std::chrono::milliseconds{1000 / FPS});

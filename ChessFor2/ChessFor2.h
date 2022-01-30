@@ -1,7 +1,7 @@
 #pragma once
 
+#include "BaseUserIO.h"
 #include "ChessBoard.h"
-#include "IUserIO.h"
 #include "PlayerId.h"
 
 #include <atomic>
@@ -18,11 +18,12 @@ public:
 
   void run();
 
-  void positionClicked();
-  void exitGame();
+  void exit();
+  void tileClicked(Position const &p);
+  Tile getTile(Position const &pos) const;
 
 private:
-  std::unique_ptr<IUserIO> m_io;
+  std::unique_ptr<BaseUserIO> m_io;
   std::unique_ptr<ChessBoard> m_board;
   PlayerId m_currentPlayer{PlayerId::PLAYER1};
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../IUserIO.h"
-#include "../Position.h"
+#include "../BaseUserIO.h"
 
-#include <functional>
 #include <memory>
+
+class ChessFor2;
 
 class GuiRenderHelper;
 class GuiInputHelper;
@@ -13,24 +13,20 @@ struct SDL_Window;
 struct SDL_Renderer;
 
 /**
- * @brief The Gui class implements the UserIO
- * methods based on a Graphic User Interface.
+ * @brief The Gui class inherits from BaseUserIO
+ * and implements an specific user IO.
  *
  * This implementation uses SDL2 library.
  */
-class Gui : public IUserIO {
+class Gui : public BaseUserIO {
 public:
   /**
    * @brief Gui constructor.
-   * @param tileClickCb Callback for tile click.
-   * @param exitCb Callback for game exit.
+   * @param game Game instance.
    */
-  Gui(const std::function<void(Position)> &tileClickCb,
-      const std::function<void()> &exitCb);
+  Gui(ChessFor2 *game);
 
   ~Gui();
-
-  void setBoard(ChessBoard *board) override;
 
 private:
   std::unique_ptr<GuiRenderHelper> m_render;

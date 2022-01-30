@@ -5,7 +5,7 @@
 #include <atomic>
 #include <thread>
 
-class ChessBoard;
+class ChessFor2;
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -24,7 +24,7 @@ public:
    * @param window The window to draw to.
    * @param renderer The renderer to use.
    */
-  GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer);
+  GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer, ChessFor2 *game);
   ~GuiRenderHelper();
 
   /**
@@ -46,12 +46,6 @@ public:
    */
   int getTileSize() const;
 
-  /**
-   * @brief Sets a new board info to be drawn.
-   * @param board The new board info.
-   */
-  void setBoard(ChessBoard *board);
-
 private:
   int getTileSideLength() const;
   std::pair<int, int> getDrawingOffsets() const;
@@ -61,7 +55,7 @@ private:
   SDL_Window *m_window{nullptr};
   SDL_Renderer *m_renderer{nullptr};
 
-  ChessBoard *m_board{nullptr};
+  ChessFor2 *m_game{nullptr};
 
   std::atomic_bool m_running{true};
   std::thread m_renderThread;
