@@ -5,7 +5,9 @@
 #include "PlayerId.h"
 
 #include <atomic>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 
 /**
  * @brief The ChessFor2 class contains the logic
@@ -27,5 +29,8 @@ private:
   std::unique_ptr<ChessBoard> m_board;
   PlayerId m_currentPlayer{PlayerId::PLAYER1};
 
+  // Stuff to control game exit
+  std::mutex m_exitMutex;
+  std::condition_variable m_exitCv;
   std::atomic_bool m_running{true};
 };
