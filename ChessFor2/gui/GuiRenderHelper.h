@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PieceImgLoader.h"
+
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -71,4 +73,6 @@ private:
   int m_tileSize{0};
   int m_offsetX{0};
   int m_offsetY{0};
+
+  std::unique_ptr<PieceImgLoader> m_imgLoader;
 };

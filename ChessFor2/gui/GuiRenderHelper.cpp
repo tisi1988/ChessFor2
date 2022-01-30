@@ -46,10 +46,40 @@ void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
     }
   }
 }
+
+void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
+                ChessBoard *board, int offsetX, int offsetY, int tileSide) {
+  int const pieceWidth = imgLoader->getPieceWidth();
+  int const pieceHeight = imgLoader->getPieceHeight();
+
+  // Whites x=208*i y=0
+  // Black  x=208*i y=213
+  for (int row = 0; row < 8; row++) {
+    for (int col = 0; col < 8; col++) {
+      Piece const piece = board->getTile(Position(row, col)).getPiece();
+
+      if (piece.getType() == PieceType::NONE) {
+        continue;
+      }
+
+      auto const pieceTextureLoc = imgLoader->getPieceTextureCoordinate(
+          piece.getType(), piece.getColor());
+
+      SDL_Rect srcrect = {pieceTextureLoc.getX(), pieceTextureLoc.getY(),
+                          pieceWidth, pieceHeight};
+      SDL_Rect dstrect = {offsetX + col * tileSide, offsetY + row * tileSide,
+                          tileSide, tileSide};
+
+      SDL_RenderCopy(renderer, imgLoader->getPiecesTexture(), &srcrect,
+                     &dstrect);
+    }
+  }
+}
 }; // namespace
 
 GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer)
-    : m_window(window), m_renderer(renderer) {
+    : m_window(window), m_renderer(renderer),
+      m_imgLoader(std::make_unique<PieceImgLoader>(renderer)) {
   m_renderThread = std::thread(&GuiRenderHelper::drawChessBoard, this);
 }
 
@@ -97,7 +127,10 @@ void GuiRenderHelper::drawChessBoard() {
 
     {
       std::lock_guard<std::mutex> l(m_boardMutex);
-      // TODO Draw pieces
+      if (m_board) {
+        drawPieces(m_renderer, m_imgLoader.get(), m_board, m_offsetX, m_offsetY,
+                   m_tileSize);
+      }
     }
 
     // Update the screen
