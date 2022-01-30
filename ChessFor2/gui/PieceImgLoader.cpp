@@ -18,10 +18,9 @@ PieceImgLoader::~PieceImgLoader() { SDL_DestroyTexture(m_texture); }
 
 Position PieceImgLoader::getPieceTextureCoordinate(PieceType type,
                                                    PieceColor color) const {
-  // Whites x=208*i y=0
-  // Black  x=208*i y=213
+  static constexpr int PIECE_SIDE_PX = 213;
 
-  int const offsetY = color == PieceColor::WHITE ? 0 : 213;
+  int const offsetY = color == PieceColor::WHITE ? 0 : PIECE_SIDE_PX;
   int offsetX_multiplier;
 
   switch (type) {
@@ -49,7 +48,7 @@ Position PieceImgLoader::getPieceTextureCoordinate(PieceType type,
     break;
   }
 
-  return {offsetX_multiplier * 213, offsetY};
+  return {offsetX_multiplier * PIECE_SIDE_PX, offsetY};
 }
 
 SDL_Texture *PieceImgLoader::getPiecesTexture() const { return m_texture; }
