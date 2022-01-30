@@ -39,7 +39,6 @@ class ChessFor2 {
 
 class Tile {
     - status : TileStatus
-    - color : TileColor
     + Tile(c:TileColor)
     + setStatus(s:TileStatus)
     + setPiece(p:Piece)
@@ -86,7 +85,7 @@ Gui "1" -left "1" GuiInputHelper
 abstract Piece {
     # color : PieceColor
     # type : PieceType
-    + getMoves(p:Position) : vector<Moves>
+    + getMoves(p:Position) : vector<Position>
 }
 
 class Position {
