@@ -21,7 +21,7 @@ void ChessFor2::exit() {
   m_exitCv.notify_one();
 }
 
-Tile ChessFor2::getTile(Position const &pos) const {
+Tile *ChessFor2::getTile(Position const &pos) {
   return m_board->getTile(std::move(pos));
 }
 

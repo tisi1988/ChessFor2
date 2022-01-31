@@ -57,19 +57,19 @@ void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
   // Black  x=208*i y=213
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      Piece piece;
+      Piece *piece;
       try {
-        piece = game->getTile(Position(row, col)).getPiece();
+        piece = game->getTile(Position(row, col))->getPiece();
       } catch (std::runtime_error const &e) {
         throw;
       }
 
-      if (piece.getType() == PieceType::NONE) {
+      if (!piece) {
         continue;
       }
 
       auto const pieceTextureLoc = imgLoader->getPieceTextureCoordinate(
-          piece.getType(), piece.getColor());
+          piece->getType(), piece->getColor());
 
       SDL_Rect srcrect = {pieceTextureLoc.getX(), pieceTextureLoc.getY(),
                           pieceWidth, pieceHeight};

@@ -43,7 +43,7 @@ public:
    * @param pos The position of the requested Tile.
    * @return the Tile on the given position.
    */
-  Tile getTile(Position const &pos) const;
+  Tile *getTile(Position const &pos);
 
 private:
   std::unique_ptr<BaseUserIO> m_io;

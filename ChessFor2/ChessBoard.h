@@ -22,7 +22,7 @@ public:
    * @param pos The position to get the tile from.
    * @return the Tile for the given position.
    */
-  Tile getTile(Position const &pos) const;
+  Tile *getTile(Position const &pos);
 
 private:
   void initializePieces();
