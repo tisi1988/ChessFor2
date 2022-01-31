@@ -1,9 +1,23 @@
 #include "ChessFor2.h"
+
+#include "TileStatus.h"
 #include "gui/Gui.h"
+#include "pieces/Piece.h"
 
 #include <functional>
 #include <iostream>
 #include <thread>
+
+namespace {
+void filterOutOfRange(std::vector<Position> &positions) {
+  positions.erase(std::remove_if(positions.begin(), positions.end(),
+                                 [](Position const &p) {
+                                   return !p.inRange(
+                                       0, ChessBoard::BOARD_SIZE_TILES - 1);
+                                 }),
+                  positions.end());
+}
+} // namespace
 
 ChessFor2::ChessFor2() {
   try {
@@ -26,7 +40,33 @@ Tile *ChessFor2::getTile(Position const &pos) {
 }
 
 void ChessFor2::tileClicked(Position const &p) {
-  std::cout << "Tile Row=" << p.getX() << " Col=" << p.getY() << std::endl;
+  std::cout << "Tile Row=" << p.getY() << " Col=" << p.getX() << std::endl;
+
+  // Check if the clicked tile contains a piece of the current player
+  Tile *clickedTile{nullptr};
+  try {
+    clickedTile = m_board->getTile(p);
+  } catch (std::runtime_error const &e) {
+    std::cout << std::string("Error getting the tile clicked: ") + e.what();
+
+    return;
+  }
+
+  Piece *clickedPiece = clickedTile->getPiece();
+
+  if (!clickedPiece || clickedPiece->getColor() != m_currentPlayer) {
+    // Clicked empty Tile or opponent's piece, do nothing
+    return;
+  }
+
+  // The clicked Tile contains a piece of the current player get possible moves
+  auto candidateMoves = clickedPiece->getMoves(p);
+  filterOutOfRange(candidateMoves);
+
+  // Set all the possible destinations
+  for (auto &&p : candidateMoves) {
+    m_board->getTile(p)->setStatus(TileStatus::MOVE_CANDIDATE);
+  }
 }
 
 void ChessFor2::run() {

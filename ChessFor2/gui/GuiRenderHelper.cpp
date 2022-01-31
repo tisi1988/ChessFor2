@@ -1,6 +1,7 @@
 #include "GuiRenderHelper.h"
 
 #include "../ChessFor2.h"
+#include "../pieces/Piece.h"
 
 extern "C" {
 #include <SDL_render.h>
@@ -16,7 +17,7 @@ void clearScreen(SDL_Renderer *renderer) {
   SDL_RenderClear(renderer);
 }
 
-void setTileColor(SDL_Renderer *renderer, int row, int col) {
+void setDefaultTileColor(SDL_Renderer *renderer, int row, int col) {
   // 0 for dark tile, 1 for light tile
   bool lightColor{true};
   if ((row % 2 == 0 && col % 2 == 0) || (row % 2 != 0 && col % 2 != 0)) {
@@ -30,11 +31,21 @@ void setTileColor(SDL_Renderer *renderer, int row, int col) {
   }
 }
 
-void drawBackgorund(SDL_Renderer *renderer, int offsetX, int offsetY,
-                    int tileSide) {
+void setTileColor(SDL_Renderer *renderer, TileStatus tileStatus, int row,
+                  int col) {
+  if (tileStatus == TileStatus::NONE) {
+    setDefaultTileColor(renderer, row, col);
+  } else if (tileStatus == TileStatus::MOVE_CANDIDATE) {
+    SDL_SetRenderDrawColor(renderer, 0, 200, 0, SDL_ALPHA_OPAQUE);
+  }
+}
+
+void drawBackgorund(SDL_Renderer *renderer, ChessFor2 *game, int offsetX,
+                    int offsetY, int tileSide) {
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      setTileColor(renderer, row, col);
+      setTileColor(renderer, game->getTile(Position(row, col))->getStatus(),
+                   row, col);
       // Create the cell rectangle
       SDL_Rect cell_rect;
       cell_rect.x = col * tileSide + offsetX;
@@ -126,7 +137,7 @@ void GuiRenderHelper::drawChessBoard() {
     while (m_running) {
       clearScreen(m_renderer);
       updateDimensions();
-      drawBackgorund(m_renderer, m_offsetX, m_offsetY, m_tileSize);
+      drawBackgorund(m_renderer, m_game, m_offsetX, m_offsetY, m_tileSize);
 
       drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
                  m_tileSize);
