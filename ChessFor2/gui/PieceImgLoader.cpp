@@ -41,8 +41,6 @@ Position PieceImgLoader::getPieceTextureCoordinate(PieceType type,
     break;
   case PieceType::KING:
     [[fallthrough]];
-  case PieceType::NONE:
-    [[fallthrough]];
   default:
     offsetX_multiplier = 0;
     break;
