@@ -1,5 +1,7 @@
 #pragma once
 
+#include "TileStatus.h"
+
 class Piece;
 
 /**
@@ -36,6 +38,22 @@ public:
   void setPiece(Piece *piece);
 
   /**
+   * @return true if the Tile is empty, false otherwise.
+   */
+  bool isEmpty() const;
+
+  /**
+   * @return the Tile status.
+   */
+  TileStatus getStatus() const;
+
+  /**
+   * @brief Sets a new status on the Tile.
+   * @param status The new status.
+   */
+  void setStatus(TileStatus status);
+
+  /**
    * @brief Assign operator.
    * @param other The Tile to assign from.
    * @return the assigned Tile.
@@ -44,4 +62,5 @@ public:
 
 private:
   Piece *m_piece{nullptr};
+  TileStatus m_status{TileStatus::NONE};
 };
