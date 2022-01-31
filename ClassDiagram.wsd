@@ -69,12 +69,12 @@ class GuiRenderHelper {
     + getOffsetY() : Integer
     + getTileSize() : Integer
 }
-Gui "1" - "1" GuiRenderHelper
+Gui "1" -left- "1" GuiRenderHelper
 class GuiInputHelper {
     + GuiInputHelper(tileClickCb : Function, exitCb : Function)
     - inputLoop()
 }
-Gui "1" -left "1" GuiInputHelper
+Gui "1" -down- "1" GuiInputHelper
 }
 
 abstract Piece {
@@ -82,8 +82,45 @@ abstract Piece {
     # direction : Integer
     + getColor()) : PieceColor
     + {abstract} getType() : PieceType
-    + {abstract} getMoves(p:Position) : vector<Position>
+    + {abstract} getMoves(p:Position) : List<Position>
+    + {static} create(type : PieceType,  color : PieceColor) : Piece
 }
+
+class Pawn {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-left- Pawn
+
+class Tower {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-left- Tower
+
+class Horse {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-down- Horse
+
+class Bishop {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-right- Bishop
+
+class Queen {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-down- Queen
+
+class King {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+Piece <|-down- King
 
 class Position {
     - x : Integer
