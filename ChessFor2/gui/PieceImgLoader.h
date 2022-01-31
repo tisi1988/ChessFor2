@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../PieceColor.h"
-#include "../PieceType.h"
 #include "../Position.h"
+#include "../pieces/PieceColor.h"
+#include "../pieces/PieceType.h"
 
 struct SDL_Texture;
 struct SDL_Renderer;

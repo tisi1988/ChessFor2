@@ -12,6 +12,8 @@
  */
 class ChessBoard {
 public:
+  static constexpr int BOARD_SIZE_TILES{8};
+
   /**
    * @brief ChessBoard class constructor.
    */
@@ -29,6 +31,5 @@ private:
 
   mutable std::mutex m_tilesMutex;
 
-  static constexpr int BOARD_SIZE_TILES{8};
   Tile m_tiles[BOARD_SIZE_TILES][BOARD_SIZE_TILES];
 };
