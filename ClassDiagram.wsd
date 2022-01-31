@@ -5,15 +5,10 @@ skinparam Linetype ortho
 title 'ChessFor2'
 
 package Enums {
-enum Player{
-    PLAYER1
-    PLAYER2
-}
-
 enum TileStatus {
     IDLE
-    PIECE_SELECTED
-    PIECE_MOVEMENT
+    SELECTED
+    MOVE_CANDIDATE
 }
 
 enum PieceColor {
@@ -32,24 +27,25 @@ enum PieceType {
 }
 
 class ChessFor2 {
-    - currentPlayer : PlayerId
+    - currentPlayer : PieceColor
     + positionClicked(p:Position)
     + exitGame()
+    + getTile(p : Position) : Tile*
 }
 
 class Tile {
     - status : TileStatus
     + Tile(c:TileColor)
+    + setStatus() : TileStatus
     + setStatus(s:TileStatus)
     + setPiece(p:Piece)
-    + clear()
+    + isEmpty() : Boolean
     + getPiece() : Piece
 }
 Tile "1" -- "0..1" Piece
 
 class ChessBoard {
-    + setActivePiece(p:Piece)
-    + getPieceType(p:Position) : PieceType
+    + getTile(p : Position) : Tile*
 }
 ChessFor2 "1" -right- "1" ChessBoard
 ChessBoard "1" -- "64" Tile
@@ -83,8 +79,10 @@ Gui "1" -left "1" GuiInputHelper
 
 abstract Piece {
     # color : PieceColor
-    # type : PieceType
-    + getMoves(p:Position) : vector<Position>
+    # direction : Integer
+    + getColor()) : PieceColor
+    + {abstract} getType() : PieceType
+    + {abstract} getMoves(p:Position) : vector<Position>
 }
 
 class Position {
