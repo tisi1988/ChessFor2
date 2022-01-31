@@ -2,7 +2,7 @@
 
 #include "BaseUserIO.h"
 #include "ChessBoard.h"
-#include "PlayerId.h"
+#include "pieces/PieceColor.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -48,7 +48,7 @@ public:
 private:
   std::unique_ptr<BaseUserIO> m_io;
   std::unique_ptr<ChessBoard> m_board;
-  PlayerId m_currentPlayer{PlayerId::PLAYER1};
+  PieceColor m_currentPlayer{PieceColor::WHITE};
 
   // Stuff to control game exit
   std::mutex m_exitMutex;
