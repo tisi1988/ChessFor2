@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Piece.h"
+class Piece;
 
 /**
  * @brief The Tile class implements a single tile on the chess board.
- *
- * A Tile contains a Piece. However, such Piece can be of PieceType NONE to mean
- * the Tile is empty.
  */
 class Tile {
 public:
@@ -19,7 +16,7 @@ public:
    * @brief Tile class constructor.
    * @param piece The Piece the Tile constains.
    */
-  explicit Tile(Piece const &piece);
+  explicit Tile(Piece *piece);
 
   /**
    * @brief Tile copy constructor.
@@ -30,13 +27,13 @@ public:
   /**
    * @return the Piece inside the Tile.
    */
-  Piece getPiece() const;
+  Piece *getPiece() const;
 
   /**
    * @brief Updates the Piece inside the Tile.
    * @param piece The new Piece.
    */
-  void setPiece(Piece const &piece);
+  void setPiece(Piece *piece);
 
   /**
    * @brief Assign operator.
@@ -46,5 +43,5 @@ public:
   Tile &operator=(Tile const &other);
 
 private:
-  Piece m_piece;
+  Piece *m_piece{nullptr};
 };
