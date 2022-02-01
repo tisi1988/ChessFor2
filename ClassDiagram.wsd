@@ -79,7 +79,6 @@ Gui "1" -down- "1" GuiInputHelper
 
 abstract Piece {
     # color : PieceColor
-    # direction : Integer
     + getColor()) : PieceColor
     + {abstract} getType() : PieceType
     + {abstract} getMoves(p:Position) : List<Position>
@@ -88,6 +87,7 @@ abstract Piece {
 
 class Pawn {
     + getType() : PieceType
+    - direction : Integer
     + getMoves(p:Position) : List<Position>
 }
 Piece <|-left- Pawn
