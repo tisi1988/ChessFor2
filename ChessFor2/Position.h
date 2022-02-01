@@ -29,6 +29,9 @@ public:
    */
   std::string toString() const;
 
+  bool operator==(Position const &other) const;
+  bool operator!=(Position const &other) const;
+
 private:
   int m_x;
   int m_y;

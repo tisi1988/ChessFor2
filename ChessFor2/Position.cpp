@@ -9,3 +9,11 @@ int Position::getY() const { return m_y; }
 std::string Position::toString() const {
   return "[" + std::to_string(m_x) + ", " + std::to_string(m_y) + "]";
 }
+
+bool Position::operator==(Position const &other) const {
+  return m_x == other.m_x && m_y == other.m_y;
+}
+
+bool Position::operator!=(Position const &other) const {
+  return !(*this == other);
+}
