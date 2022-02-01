@@ -26,6 +26,13 @@ public:
    */
   Tile *getTile(Position const &pos);
 
+  /**
+   * @brief Check if a given position is valid in the board.
+   * @param pos The Position to check.
+   * @return true if the position is inside the board. False, otherwise.
+   */
+  bool isValid(Position const &pos) const;
+
 private:
   void initializePieces();
 
