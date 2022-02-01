@@ -54,5 +54,4 @@ public:
 
 protected:
   PieceColor m_color;
-  int m_direction;
 };

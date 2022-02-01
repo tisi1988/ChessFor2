@@ -11,8 +11,7 @@
 #include <memory>
 #include <stdexcept>
 
-Piece::Piece(PieceColor const &color)
-    : m_color(color), m_direction(color == PieceColor::WHITE ? -1 : 1) {}
+Piece::Piece(PieceColor const &color) : m_color(color) {}
 
 Piece::~Piece() = default;
 

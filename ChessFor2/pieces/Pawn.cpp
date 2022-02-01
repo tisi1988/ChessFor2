@@ -9,7 +9,8 @@ bool isInInitialTile(int row, PieceColor color) {
 }
 } // namespace
 
-Pawn::Pawn(PieceColor const &color) : Piece(color) {}
+Pawn::Pawn(PieceColor const &color)
+    : Piece(color), m_direction(color == PieceColor::WHITE ? -1 : 1) {}
 
 Pawn::~Pawn() {}
 
@@ -17,12 +18,12 @@ PieceType Pawn::getType() const { return PieceType::PAWN; }
 
 std::vector<Position> Pawn::getMoves(ChessBoard *board,
                                      Position const &origin) const {
-  std::vector<Position> dest;
+  std::vector<Position> moves;
 
-  addFrontMoves(dest, board, origin);
-  addKills(dest, board, origin);
+  addFrontMoves(moves, board, origin);
+  addKills(moves, board, origin);
 
-  return dest;
+  return moves;
 }
 
 void Pawn::addFrontMoves(std::vector<Position> &moves, ChessBoard *board,

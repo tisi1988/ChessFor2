@@ -32,6 +32,7 @@ private:
   void addKills(std::vector<Position> &moves, ChessBoard *board,
                 Position const &origin) const;
 
-  bool checkPossibleKill(ChessBoard *board,
-                         Position const &pos) const;
+  bool checkPossibleKill(ChessBoard *board, Position const &pos) const;
+
+  int m_direction;
 };
