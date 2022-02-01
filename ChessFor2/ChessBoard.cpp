@@ -1,6 +1,5 @@
 #include "ChessBoard.h"
 
-#include "pieces/Pawn.h"
 #include "pieces/Piece.h"
 
 #include <tuple>
@@ -28,10 +27,10 @@ void ChessBoard::initializePieces() {
     m_tiles[0][col] =
         Tile(Piece::create(PIECE_ORDER.at(col), PieceColor::BLACK));
     m_tiles[Piece::BLACK_PAWN_INIT_ROW][col] =
-        Tile(new Pawn(PieceColor::BLACK));
+        Tile(Piece::create(PieceType::PAWN, PieceColor::BLACK));
 
     m_tiles[Piece::WHITE_PAWN_INIT_ROW][col] =
-        Tile(new Pawn(PieceColor::WHITE));
+        Tile(Piece::create(PieceType::PAWN, PieceColor::WHITE));
     m_tiles[7][col] =
         Tile(Piece::create(PIECE_ORDER.at(col), PieceColor::WHITE));
   }
