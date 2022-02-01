@@ -46,8 +46,14 @@ public:
   Tile *getTile(Position const &pos);
 
 private:
+  void updateMovingPiece(Position const &p);
+  void changePlayerTurn();
+
   std::unique_ptr<BaseUserIO> m_io;
   std::unique_ptr<ChessBoard> m_board;
+
+  // Game logic stuff
+  Position m_lastSelectedTile;
   PieceColor m_currentPlayer{PieceColor::WHITE};
 
   // Stuff to control game exit

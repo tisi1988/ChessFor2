@@ -8,7 +8,7 @@
 #include <iostream>
 #include <thread>
 
-ChessFor2::ChessFor2() {
+ChessFor2::ChessFor2() : m_lastSelectedTile(-1, -1) {
   try {
     m_board = std::make_unique<ChessBoard>();
 
@@ -31,33 +31,58 @@ Tile *ChessFor2::getTile(Position const &pos) {
 void ChessFor2::tileClicked(Position const &p) {
   std::cout << "Tile Row=" << p.getY() << " Col=" << p.getX() << std::endl;
 
-  // Check if the clicked tile contains a piece of the current player
-  Tile *clickedTile{nullptr};
-  try {
-    clickedTile = m_board->getTile(p);
-  } catch (std::runtime_error const &e) {
-    std::cout << std::string("Error getting the tile clicked: ") + e.what();
-
+  // Check if the position is valid
+  if (!m_board->isValid(p)) {
     return;
   }
 
-  Piece *clickedPiece = clickedTile->getPiece();
+  Tile *clickedTile = m_board->getTile(p);
+  if (clickedTile->isEmpty()) {
+    // TODO Check if the clicked tile belong to previously computed candidate
+    // movements (if any)
+  } else if (clickedTile->getPiece()->getColor() == m_currentPlayer) {
+    updateMovingPiece(p);
+  } else {
+    // TODO Check if the clicked tile belong to previously computed candidate
+    // and kill the enemy piece
 
-  if (!clickedPiece || clickedPiece->getColor() != m_currentPlayer) {
-    // Clicked empty Tile or opponent's piece, do nothing
-    return;
-  }
-
-  // The clicked Tile contains a piece of the current player get possible moves
-  auto candidateMoves = clickedPiece->getMoves(m_board.get(), p);
-
-  // Set all the possible destinations
-  for (auto &&p : candidateMoves) {
-    m_board->getTile(p)->setStatus(TileStatus::MOVE_CANDIDATE);
+    changePlayerTurn();
   }
 }
 
 void ChessFor2::run() {
   std::unique_lock<std::mutex> lk(m_exitMutex);
   m_exitCv.wait(lk, [&running = m_running] { return !running; });
+}
+
+void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
+  if (newSelectedPosition == m_lastSelectedTile) {
+    return;
+  }
+
+  // Just clear any previous possible movements
+  if (m_board->isValid(m_lastSelectedTile)) {
+    Tile *prevSelectedTile = m_board->getTile(m_lastSelectedTile);
+    auto prevCandidateMoves = prevSelectedTile->getPiece()->getMoves(
+        m_board.get(), m_lastSelectedTile);
+    for (auto &&p : prevCandidateMoves) {
+      m_board->getTile(p)->setStatus(TileStatus::NONE);
+    }
+  }
+
+  // Update the candidate movements
+  Tile *selectedTile = m_board->getTile(newSelectedPosition);
+  auto candidateMoves =
+      selectedTile->getPiece()->getMoves(m_board.get(), newSelectedPosition);
+  for (auto &&p : candidateMoves) {
+    m_board->getTile(p)->setStatus(TileStatus::MOVE_CANDIDATE);
+  }
+
+  m_lastSelectedTile = newSelectedPosition;
+}
+
+void ChessFor2::changePlayerTurn() {
+  m_lastSelectedTile = Position(-1, -1);
+  m_currentPlayer = m_currentPlayer == PieceColor::WHITE ? PieceColor::BLACK
+                                                         : PieceColor::WHITE;
 }
