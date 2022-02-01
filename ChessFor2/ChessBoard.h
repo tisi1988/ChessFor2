@@ -31,7 +31,7 @@ public:
    * @param pos The Position to check.
    * @return true if the position is inside the board. False, otherwise.
    */
-  bool isValid(Position const &pos) const;
+  bool isValidPosition(Position const &pos) const;
 
 private:
   void initializePieces();

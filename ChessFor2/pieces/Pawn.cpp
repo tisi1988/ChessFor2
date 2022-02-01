@@ -32,14 +32,14 @@ void Pawn::addFrontMoves(std::vector<Position> &moves, ChessBoard *board,
         Position(origin.getX() + 1 * m_direction, origin.getY());
 
     // If there's no piece on that position, it can move there
-    if (board->isValid(frontTile) && !board->getTile(frontTile)->getPiece()) {
+    if (board->isValidPosition(frontTile) && !board->getTile(frontTile)->getPiece()) {
       moves.push_back(frontTile);
 
       // Pawns can move an extra tile forward if their in the initial tile
       Position const secondTile =
           Position(frontTile.getX() + 1 * m_direction, frontTile.getY());
       if (isInInitialTile(origin.getX(), m_color) &&
-          board->isValid(secondTile) &&
+          board->isValidPosition(secondTile) &&
           !board->getTile(secondTile)->getPiece()) {
         moves.push_back(secondTile);
       }
@@ -78,7 +78,7 @@ void Pawn::addKills(std::vector<Position> &moves, ChessBoard *board,
 bool Pawn::checkPossibleKill(ChessBoard *board, Position const &pos) const {
   Tile *tile{nullptr};
 
-  if (board->isValid(pos)) {
+  if (board->isValidPosition(pos)) {
     tile = board->getTile(pos);
   }
 

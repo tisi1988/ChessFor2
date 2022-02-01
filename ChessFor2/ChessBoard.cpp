@@ -9,7 +9,7 @@
 ChessBoard::ChessBoard() { initializePieces(); }
 
 Tile *ChessBoard::getTile(Position const &pos) {
-  if (!isValid(pos)) {
+  if (!isValidPosition(pos)) {
     throw std::runtime_error("Invalid coordinate getting a Tile: " +
                              pos.toString());
   }
@@ -37,7 +37,7 @@ void ChessBoard::initializePieces() {
   }
 }
 
-bool ChessBoard::isValid(Position const &pos) const {
+bool ChessBoard::isValidPosition(Position const &pos) const {
   return pos.getX() >= 0 && pos.getX() < BOARD_SIZE_TILES && pos.getY() >= 0 &&
          pos.getY() < BOARD_SIZE_TILES;
 }

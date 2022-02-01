@@ -32,7 +32,7 @@ void ChessFor2::tileClicked(Position const &p) {
   std::cout << "Tile Row=" << p.getY() << " Col=" << p.getX() << std::endl;
 
   // Check if the position is valid
-  if (!m_board->isValid(p)) {
+  if (!m_board->isValidPosition(p)) {
     return;
   }
 
@@ -61,7 +61,7 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
   }
 
   // Just clear any previous possible movements
-  if (m_board->isValid(m_lastSelectedTile)) {
+  if (m_board->isValidPosition(m_lastSelectedTile)) {
     Tile *prevSelectedTile = m_board->getTile(m_lastSelectedTile);
     auto prevCandidateMoves = prevSelectedTile->getPiece()->getMoves(
         m_board.get(), m_lastSelectedTile);
