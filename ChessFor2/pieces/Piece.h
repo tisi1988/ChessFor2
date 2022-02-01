@@ -6,6 +6,8 @@
 
 #include <vector>
 
+class ChessBoard;
+
 /**
  * @brief The Piece class implements a generic piece.
  */
@@ -35,12 +37,12 @@ public:
   /**
    * @brief Computes the possible destination positions of the Piece based on
    * a given origin Position.
+   * @param board The chessboard instance.
    * @param origin Where the Piece is right now.
    * @return the list of possible Position where the Piece can be moved to.
-   * @note It does not filter out of bounds nor collisions with other Pieces
-   * from the same player.
    */
-  virtual std::vector<Position> getMoves(Position const &origin) const = 0;
+  virtual std::vector<Position> getMoves(ChessBoard *board,
+                                         Position const &origin) const = 0;
 
   /**
    * @brief Factory method to create Pieces.

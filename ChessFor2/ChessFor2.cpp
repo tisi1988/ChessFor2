@@ -8,17 +8,6 @@
 #include <iostream>
 #include <thread>
 
-namespace {
-void filterOutOfRange(std::vector<Position> &positions) {
-  positions.erase(std::remove_if(positions.begin(), positions.end(),
-                                 [](Position const &p) {
-                                   return !p.inRange(
-                                       0, ChessBoard::BOARD_SIZE_TILES - 1);
-                                 }),
-                  positions.end());
-}
-} // namespace
-
 ChessFor2::ChessFor2() {
   try {
     m_board = std::make_unique<ChessBoard>();
@@ -60,8 +49,7 @@ void ChessFor2::tileClicked(Position const &p) {
   }
 
   // The clicked Tile contains a piece of the current player get possible moves
-  auto candidateMoves = clickedPiece->getMoves(p);
-  filterOutOfRange(candidateMoves);
+  auto candidateMoves = clickedPiece->getMoves(m_board.get(), p);
 
   // Set all the possible destinations
   for (auto &&p : candidateMoves) {

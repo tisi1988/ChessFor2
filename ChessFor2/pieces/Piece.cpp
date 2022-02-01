@@ -7,6 +7,7 @@
 #include "Queen.h"
 #include "Tower.h"
 
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 

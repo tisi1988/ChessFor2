@@ -6,7 +6,8 @@ King::~King() {}
 
 PieceType King::getType() const { return PieceType::KING; }
 
-std::vector<Position> King::getMoves(Position const &origin) const {
+std::vector<Position> King::getMoves(ChessBoard *board,
+                                     Position const &origin) const {
   // TODO
   return {};
 }

@@ -9,5 +9,6 @@ public:
   ~Bishop();
 
   PieceType getType() const override;
-  std::vector<Position> getMoves(Position const &origin) const override;
+  std::vector<Position> getMoves(ChessBoard *board,
+                                 Position const &origin) const override;
 };

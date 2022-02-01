@@ -6,7 +6,8 @@ Horse::~Horse() {}
 
 PieceType Horse::getType() const { return PieceType::HORSE; }
 
-std::vector<Position> Horse::getMoves(Position const &origin) const {
+std::vector<Position> Horse::getMoves(ChessBoard *board,
+                                      Position const &origin) const {
   // TODO
   return {};
 }

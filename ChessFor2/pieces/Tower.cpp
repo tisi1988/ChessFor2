@@ -6,7 +6,8 @@ Tower::~Tower() {}
 
 PieceType Tower::getType() const { return PieceType::TOWER; }
 
-std::vector<Position> Tower::getMoves(Position const &origin) const {
+std::vector<Position> Tower::getMoves(ChessBoard *board,
+                                      Position const &origin) const {
   // TODO
   return {};
 }

@@ -1,5 +1,7 @@
 #include "Pawn.h"
 
+#include "../ChessBoard.h"
+
 namespace {
 bool isInInitialTile(int row, PieceColor color) {
   return row == Piece::BLACK_PAWN_INIT_ROW && color == PieceColor::BLACK ||
@@ -13,7 +15,8 @@ Pawn::~Pawn() {}
 
 PieceType Pawn::getType() const { return PieceType::PAWN; }
 
-std::vector<Position> Pawn::getMoves(Position const &origin) const {
+std::vector<Position> Pawn::getMoves(ChessBoard *board,
+                                     Position const &origin) const {
   std::vector<Position> dest;
   dest.push_back(Position(origin.getX() + 1 * m_direction, origin.getY()));
 
