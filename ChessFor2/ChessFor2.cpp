@@ -75,7 +75,9 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
   auto candidateMoves =
       selectedTile->getPiece()->getMoves(m_board.get(), newSelectedPosition);
   for (auto &&p : candidateMoves) {
-    m_board->getTile(p)->setStatus(TileStatus::MOVE_CANDIDATE);
+    auto const isEmpty = m_board->getTile(p)->isEmpty();
+    m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE
+                                           : TileStatus::KILL_CANDIDATE);
   }
 
   m_lastSelectedTile = newSelectedPosition;

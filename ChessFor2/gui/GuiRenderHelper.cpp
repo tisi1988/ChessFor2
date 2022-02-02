@@ -37,6 +37,8 @@ void setTileColor(SDL_Renderer *renderer, TileStatus tileStatus, int row,
     setDefaultTileColor(renderer, row, col);
   } else if (tileStatus == TileStatus::MOVE_CANDIDATE) {
     SDL_SetRenderDrawColor(renderer, 0, 200, 0, SDL_ALPHA_OPAQUE);
+  } else if (tileStatus == TileStatus::KILL_CANDIDATE) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 55, SDL_ALPHA_OPAQUE);
   }
 }
 
