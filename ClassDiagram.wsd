@@ -41,6 +41,7 @@ class Tile {
     + setPiece(p:Piece)
     + isEmpty() : Boolean
     + getPiece() : Piece
+    + clear()
 }
 Tile "1" -- "0..1" Piece
 
@@ -98,7 +99,7 @@ class Horse {
 }
 Piece <|-right- Horse
 
-abstract LinearMovingPiece {
+class LinearMovingPiece {
     # getMoves(directions List<Direction>, p:Position) : List<Position>
 }
 Piece <|-down- LinearMovingPiece

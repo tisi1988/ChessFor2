@@ -14,6 +14,8 @@ Piece *Tile::getPiece() const { return m_piece; }
 
 void Tile::setPiece(Piece *piece) { m_piece = piece; }
 
+void Tile::clear() { m_piece = nullptr; }
+
 bool Tile::isEmpty() const { return !m_piece; }
 
 TileStatus Tile::getStatus() const { return m_status; }

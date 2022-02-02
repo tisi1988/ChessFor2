@@ -38,6 +38,11 @@ public:
   void setPiece(Piece *piece);
 
   /**
+   * @brief Clear the Tile deleting the Piece inside (if any).
+   */
+  void clear();
+
+  /**
    * @return true if the Tile is empty, false otherwise.
    */
   bool isEmpty() const;
