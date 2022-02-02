@@ -9,6 +9,7 @@ enum TileStatus {
     IDLE
     SELECTED
     MOVE_CANDIDATE
+    KILL_CANDIDATE
 }
 
 enum PieceColor {
