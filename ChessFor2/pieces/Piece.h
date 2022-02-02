@@ -13,8 +13,11 @@ class ChessBoard;
  */
 class Piece {
 public:
+  // TODO Move these constants to each piece type
   static constexpr int BLACK_PAWN_INIT_ROW{1};
   static constexpr int WHITE_PAWN_INIT_ROW{6};
+  static constexpr int BLACK_KING_INIT_ROW{0};
+  static constexpr int WHITE_KING_INIT_ROW{7};
 
   /**
    * @brief Piece class constructor.

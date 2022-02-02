@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Piece.h"
+#include "LinearMovingPiece.h"
 #include "PieceColor.h"
 
-class Queen : public Piece {
+class Queen : public LinearMovingPiece {
 public:
   explicit Queen(PieceColor const &color);
   ~Queen();
