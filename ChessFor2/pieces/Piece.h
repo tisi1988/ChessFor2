@@ -20,7 +20,7 @@ public:
    * @brief Piece class constructor.
    * @param color Piece color.
    */
-  Piece(PieceColor const &color);
+  explicit Piece(PieceColor const &color);
 
   virtual ~Piece();
 

@@ -5,7 +5,7 @@
 
 class Tower : public Piece {
 public:
-  Tower(PieceColor const &color);
+  explicit Tower(PieceColor const &color);
   ~Tower();
 
   PieceType getType() const override;

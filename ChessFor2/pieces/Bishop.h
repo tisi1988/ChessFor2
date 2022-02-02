@@ -5,7 +5,7 @@
 
 class Bishop : public Piece {
 public:
-  Bishop(PieceColor const &color);
+  explicit Bishop(PieceColor const &color);
   ~Bishop();
 
   PieceType getType() const override;

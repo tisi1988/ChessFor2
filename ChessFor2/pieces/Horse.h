@@ -5,7 +5,7 @@
 
 class Horse : public Piece {
 public:
-  Horse(PieceColor const &color);
+  explicit Horse(PieceColor const &color);
   ~Horse();
 
   PieceType getType() const override;

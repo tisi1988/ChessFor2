@@ -5,7 +5,7 @@
 
 class Pawn : public Piece {
 public:
-  Pawn(PieceColor const &color);
+  explicit Pawn(PieceColor const &color);
   ~Pawn();
 
   PieceType getType() const override;

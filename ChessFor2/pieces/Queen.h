@@ -5,7 +5,7 @@
 
 class Queen : public Piece {
 public:
-  Queen(PieceColor const &color);
+  explicit Queen(PieceColor const &color);
   ~Queen();
 
   PieceType getType() const override;
