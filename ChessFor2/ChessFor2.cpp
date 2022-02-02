@@ -4,11 +4,19 @@
 #include "gui/Gui.h"
 #include "pieces/Piece.h"
 
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <thread>
 
-ChessFor2::ChessFor2() : m_lastSelectedTile(-1, -1) {
+namespace {
+template <typename T> bool contains(std::vector<T> c, T const &v) {
+  return std::find_if(c.begin(), c.end(),
+                      [&v](T const &p) { return p == v; }) != c.end();
+}
+} // namespace
+
+ChessFor2::ChessFor2() : m_selectedPiece(-1, -1) {
   try {
     m_board = std::make_unique<ChessBoard>();
 
@@ -37,16 +45,13 @@ void ChessFor2::tileClicked(Position const &p) {
   }
 
   Tile *clickedTile = m_board->getTile(p);
-  if (clickedTile->isEmpty()) {
-    // TODO Check if the clicked tile belong to previously computed candidate
-    // movements (if any)
-  } else if (clickedTile->getPiece()->getColor() == m_currentPlayer) {
-    updateMovingPiece(p);
-  } else {
-    // TODO Check if the clicked tile belong to previously computed candidate
-    // and kill the enemy piece
-
+  if (contains(m_selectedPieceMoves, p)) {
+    // The clicked tile belong to a candidate movements
+    moveSelectedPiece(p);
     changePlayerTurn();
+  } else if (!clickedTile->isEmpty() &&
+             clickedTile->getPiece()->getColor() == m_currentPlayer) {
+    updateMovingPiece(p);
   }
 }
 
@@ -56,11 +61,11 @@ void ChessFor2::run() {
 }
 
 void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
-  if (newSelectedPosition == m_lastSelectedTile) {
+  if (newSelectedPosition == m_selectedPiece) {
     return;
   }
 
-  if (m_board->isValidPosition(m_lastSelectedTile)) {
+  if (m_board->isValidPosition(m_selectedPiece)) {
     clearSelectedPiece();
   }
 
@@ -68,34 +73,50 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
 }
 
 void ChessFor2::changePlayerTurn() {
-  m_lastSelectedTile = Position(-1, -1);
+  m_selectedPiece = Position(-1, -1);
   m_currentPlayer = m_currentPlayer == PieceColor::WHITE ? PieceColor::BLACK
                                                          : PieceColor::WHITE;
 }
 
 void ChessFor2::clearSelectedPiece() {
-  Tile *prevSelectedTile = m_board->getTile(m_lastSelectedTile);
+  Tile *prevSelectedTile = m_board->getTile(m_selectedPiece);
   prevSelectedTile->setStatus(TileStatus::NONE);
   auto prevCandidateMoves =
-      prevSelectedTile->getPiece()->getMoves(m_board.get(), m_lastSelectedTile);
+      prevSelectedTile->getPiece()->getMoves(m_board.get(), m_selectedPiece);
   for (auto &&p : prevCandidateMoves) {
     m_board->getTile(p)->setStatus(TileStatus::NONE);
   }
 
-  m_lastSelectedTile = Position(-1, -1);
+  m_selectedPiece = Position(-1, -1);
+  m_selectedPieceMoves.clear();
 }
 
 void ChessFor2::setSelectedPiece(Position const &pos) {
-  Tile *selectedTile = m_board->getTile(pos);
+  m_selectedPiece = pos;
+
+  Tile *selectedTile = m_board->getTile(m_selectedPiece);
 
   selectedTile->setStatus(TileStatus::SELECTED);
 
-  auto candidateMoves = selectedTile->getPiece()->getMoves(m_board.get(), pos);
-  for (auto &&p : candidateMoves) {
+  m_selectedPieceMoves =
+      selectedTile->getPiece()->getMoves(m_board.get(), m_selectedPiece);
+  for (auto &&p : m_selectedPieceMoves) {
     auto const isEmpty = m_board->getTile(p)->isEmpty();
     m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE
                                            : TileStatus::KILL_CANDIDATE);
   }
+}
 
-  m_lastSelectedTile = pos;
+void ChessFor2::moveSelectedPiece(Position const &p) {
+  auto const src = m_selectedPiece;
+
+  clearSelectedPiece();
+
+  Tile *srcTile = m_board->getTile(src);
+  Piece *piece = srcTile->getPiece();
+  srcTile->clear();
+
+  Tile *dstTile = m_board->getTile(p);
+  dstTile->clear();
+  dstTile->setPiece(piece);
 }

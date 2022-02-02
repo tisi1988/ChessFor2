@@ -8,6 +8,7 @@
 #include <condition_variable>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 /**
  * @brief The ChessFor2 class contains the logic
@@ -50,12 +51,14 @@ private:
   void changePlayerTurn();
   void clearSelectedPiece();
   void setSelectedPiece(Position const &pos);
+  void moveSelectedPiece(Position const &p);
 
   std::unique_ptr<BaseUserIO> m_io;
   std::unique_ptr<ChessBoard> m_board;
 
   // Game logic stuff
-  Position m_lastSelectedTile;
+  Position m_selectedPiece;
+  std::vector<Position> m_selectedPieceMoves;
   PieceColor m_currentPlayer{PieceColor::WHITE};
 
   // Stuff to control game exit
