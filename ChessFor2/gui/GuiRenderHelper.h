@@ -64,6 +64,7 @@ private:
   int m_windowW{0};
   int m_windowH{0};
   int m_tileSize{0};
+  int m_tileStatusSize{0};
   int m_offsetX{0};
   int m_offsetY{0};
 

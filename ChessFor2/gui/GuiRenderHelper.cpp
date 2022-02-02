@@ -31,14 +31,41 @@ void setDefaultTileColor(SDL_Renderer *renderer, int row, int col) {
   }
 }
 
-void setTileColor(SDL_Renderer *renderer, TileStatus tileStatus, int row,
-                  int col) {
+void setTileStatusColor(SDL_Renderer *renderer, TileStatus tileStatus, int row,
+                        int col) {
   if (tileStatus == TileStatus::NONE) {
     setDefaultTileColor(renderer, row, col);
+  } else if (tileStatus == TileStatus::SELECTED) {
+    SDL_SetRenderDrawColor(renderer, 173, 216, 230, 128);
   } else if (tileStatus == TileStatus::MOVE_CANDIDATE) {
-    SDL_SetRenderDrawColor(renderer, 0, 200, 0, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 0, 200, 0, 128);
   } else if (tileStatus == TileStatus::KILL_CANDIDATE) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 55, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 255, 165, 0, 128);
+  }
+}
+
+void drawTileStatus(SDL_Renderer *renderer, ChessFor2 *game, int offsetX,
+                    int offsetY, int tileSide, int tileStatusSide) {
+  for (int row = 0; row < 8; row++) {
+    for (int col = 0; col < 8; col++) {
+      auto const tileStatus = game->getTile(Position(row, col))->getStatus();
+
+      if (tileStatus == TileStatus::NONE) {
+        continue;
+      }
+
+      setTileStatusColor(renderer, tileStatus, row, col);
+
+      // Create the tile rectangle
+      SDL_Rect cell_rect;
+      cell_rect.x = col * tileSide + offsetX + (tileSide - tileStatusSide) / 2;
+      cell_rect.y = row * tileSide + offsetY + (tileSide - tileStatusSide) / 2;
+      cell_rect.w = tileStatusSide;
+      cell_rect.h = tileStatusSide;
+
+      // Render our cell through SDL_Rect
+      SDL_RenderFillRect(renderer, &cell_rect);
+    }
   }
 }
 
@@ -46,8 +73,8 @@ void drawBackgorund(SDL_Renderer *renderer, ChessFor2 *game, int offsetX,
                     int offsetY, int tileSide) {
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      setTileColor(renderer, game->getTile(Position(row, col))->getStatus(),
-                   row, col);
+      setDefaultTileColor(renderer, row, col);
+
       // Create the cell rectangle
       SDL_Rect cell_rect;
       cell_rect.x = col * tileSide + offsetX;
@@ -115,6 +142,10 @@ int GuiRenderHelper::getOffsetY() const { return m_offsetY; }
 int GuiRenderHelper::getTileSize() const { return m_tileSize; }
 
 void GuiRenderHelper::updateDimensions() {
+  // The relative size (width) of the Tile status rectangle relative
+  // to the Tile size
+  static constexpr float TILE_STATUS_SIZE = 0.9;
+
   int w, h;
   SDL_GetWindowSize(m_window, &w, &h);
 
@@ -128,6 +159,7 @@ void GuiRenderHelper::updateDimensions() {
   int const minSize = std::min(m_windowW, m_windowH);
 
   m_tileSize = minSize / 8;
+  m_tileStatusSize = m_tileSize * TILE_STATUS_SIZE;
   m_offsetX = (m_windowW - minSize) / 2;
   m_offsetY = (m_windowH - minSize) / 2;
 }
@@ -135,11 +167,17 @@ void GuiRenderHelper::updateDimensions() {
 void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
+  SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
   try {
     while (m_running) {
       clearScreen(m_renderer);
       updateDimensions();
+
       drawBackgorund(m_renderer, m_game, m_offsetX, m_offsetY, m_tileSize);
+
+      drawTileStatus(m_renderer, m_game, m_offsetX, m_offsetY, m_tileSize,
+                     m_tileStatusSize);
 
       drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
                  m_tileSize);
