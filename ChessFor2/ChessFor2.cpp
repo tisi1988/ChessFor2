@@ -60,31 +60,42 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
     return;
   }
 
-  // Just clear any previous possible movements
   if (m_board->isValidPosition(m_lastSelectedTile)) {
-    Tile *prevSelectedTile = m_board->getTile(m_lastSelectedTile);
-    auto prevCandidateMoves = prevSelectedTile->getPiece()->getMoves(
-        m_board.get(), m_lastSelectedTile);
-    for (auto &&p : prevCandidateMoves) {
-      m_board->getTile(p)->setStatus(TileStatus::NONE);
-    }
+    clearSelectedPiece();
   }
 
-  // Update the candidate movements
-  Tile *selectedTile = m_board->getTile(newSelectedPosition);
-  auto candidateMoves =
-      selectedTile->getPiece()->getMoves(m_board.get(), newSelectedPosition);
-  for (auto &&p : candidateMoves) {
-    auto const isEmpty = m_board->getTile(p)->isEmpty();
-    m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE
-                                           : TileStatus::KILL_CANDIDATE);
-  }
-
-  m_lastSelectedTile = newSelectedPosition;
+  setSelectedPiece(newSelectedPosition);
 }
 
 void ChessFor2::changePlayerTurn() {
   m_lastSelectedTile = Position(-1, -1);
   m_currentPlayer = m_currentPlayer == PieceColor::WHITE ? PieceColor::BLACK
                                                          : PieceColor::WHITE;
+}
+
+void ChessFor2::clearSelectedPiece() {
+  Tile *prevSelectedTile = m_board->getTile(m_lastSelectedTile);
+  prevSelectedTile->setStatus(TileStatus::NONE);
+  auto prevCandidateMoves =
+      prevSelectedTile->getPiece()->getMoves(m_board.get(), m_lastSelectedTile);
+  for (auto &&p : prevCandidateMoves) {
+    m_board->getTile(p)->setStatus(TileStatus::NONE);
+  }
+
+  m_lastSelectedTile = Position(-1, -1);
+}
+
+void ChessFor2::setSelectedPiece(Position const &pos) {
+  Tile *selectedTile = m_board->getTile(pos);
+
+  selectedTile->setStatus(TileStatus::SELECTED);
+
+  auto candidateMoves = selectedTile->getPiece()->getMoves(m_board.get(), pos);
+  for (auto &&p : candidateMoves) {
+    auto const isEmpty = m_board->getTile(p)->isEmpty();
+    m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE
+                                           : TileStatus::KILL_CANDIDATE);
+  }
+
+  m_lastSelectedTile = pos;
 }

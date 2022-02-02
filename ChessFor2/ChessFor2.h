@@ -48,6 +48,8 @@ public:
 private:
   void updateMovingPiece(Position const &p);
   void changePlayerTurn();
+  void clearSelectedPiece();
+  void setSelectedPiece(Position const &pos);
 
   std::unique_ptr<BaseUserIO> m_io;
   std::unique_ptr<ChessBoard> m_board;
