@@ -26,11 +26,9 @@ void ChessBoard::initializePieces() {
   for (int col = 0; col < 8; col++) {
     m_tiles[0][col] =
         Tile(Piece::create(PIECE_ORDER.at(col), PieceColor::BLACK));
-    m_tiles[Piece::BLACK_PAWN_INIT_ROW][col] =
-        Tile(Piece::create(PieceType::PAWN, PieceColor::BLACK));
+    m_tiles[1][col] = Tile(Piece::create(PieceType::PAWN, PieceColor::BLACK));
 
-    m_tiles[Piece::WHITE_PAWN_INIT_ROW][col] =
-        Tile(Piece::create(PieceType::PAWN, PieceColor::WHITE));
+    m_tiles[6][col] = Tile(Piece::create(PieceType::PAWN, PieceColor::WHITE));
     m_tiles[7][col] =
         Tile(Piece::create(PIECE_ORDER.at(col), PieceColor::WHITE));
   }
