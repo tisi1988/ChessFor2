@@ -92,35 +92,40 @@ class Pawn {
 }
 Piece <|-left- Pawn
 
-class Tower {
-    + getType() : PieceType
-    + getMoves(p:Position) : List<Position>
-}
-Piece <|-left- Tower
-
 class Horse {
     + getType() : PieceType
     + getMoves(p:Position) : List<Position>
 }
-Piece <|-down- Horse
+Piece <|-right- Horse
+
+abstract LinearMovingPiece {
+    # getMoves(directions List<Direction>, p:Position) : List<Position>
+}
+Piece <|-down- LinearMovingPiece
+
+class Tower {
+    + getType() : PieceType
+    + getMoves(p:Position) : List<Position>
+}
+LinearMovingPiece <|-left- Tower
 
 class Bishop {
     + getType() : PieceType
     + getMoves(p:Position) : List<Position>
 }
-Piece <|-right- Bishop
+LinearMovingPiece <|-right- Bishop
 
 class Queen {
     + getType() : PieceType
     + getMoves(p:Position) : List<Position>
 }
-Piece <|-down- Queen
+LinearMovingPiece <|-down- Queen
 
 class King {
     + getType() : PieceType
     + getMoves(p:Position) : List<Position>
 }
-Piece <|-down- King
+LinearMovingPiece <|-down- King
 
 class Position {
     - x : Integer
