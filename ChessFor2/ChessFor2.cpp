@@ -19,9 +19,10 @@ template <typename T> bool contains(std::vector<T> c, T const &v) {
 ChessFor2::ChessFor2() : m_selectedPiece(-1, -1) {
   try {
     m_board = std::make_unique<ChessBoard>();
+    m_gameTurn = std::make_unique<GameTurn>();
 
+    // Create I/O at the end when the backend is ready
     m_io = std::make_unique<Gui>(this);
-
   } catch (std::runtime_error const &e) {
     std::cout << "Error initializing: " << e.what() << std::endl;
   }
@@ -36,9 +37,9 @@ Tile *ChessFor2::getTile(Position const &pos) {
   return m_board->getTile(std::move(pos));
 }
 
-void ChessFor2::tileClicked(Position const &p) {
-  std::cout << "Tile Row=" << p.getY() << " Col=" << p.getX() << std::endl;
+GameTurn *ChessFor2::getGameTurn() const { return m_gameTurn.get(); }
 
+void ChessFor2::tileClicked(Position const &p) {
   // Check if the position is valid
   if (!m_board->isValidPosition(p)) {
     return;
@@ -49,8 +50,8 @@ void ChessFor2::tileClicked(Position const &p) {
     // The clicked tile belong to a candidate movements
     moveSelectedPiece(p);
     changePlayerTurn();
-  } else if (!clickedTile->isEmpty() &&
-             clickedTile->getPiece()->getColor() == m_currentPlayer) {
+  } else if (!clickedTile->isEmpty() && clickedTile->getPiece()->getColor() ==
+                                            m_gameTurn->getCurrentPlayer()) {
     updateMovingPiece(p);
   }
 }
@@ -74,8 +75,7 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
 
 void ChessFor2::changePlayerTurn() {
   m_selectedPiece = Position(-1, -1);
-  m_currentPlayer = m_currentPlayer == PieceColor::WHITE ? PieceColor::BLACK
-                                                         : PieceColor::WHITE;
+  m_gameTurn->changeTurn();
 }
 
 void ChessFor2::clearSelectedPiece() {

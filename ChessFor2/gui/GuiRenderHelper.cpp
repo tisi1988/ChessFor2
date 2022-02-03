@@ -4,6 +4,7 @@
 #include "../pieces/Piece.h"
 
 extern "C" {
+#include <SDL2/SDL_ttf.h>
 #include <SDL_render.h>
 }
 
@@ -121,6 +122,35 @@ void drawPieces(SDL_Renderer *renderer, PieceImgLoader *imgLoader,
     }
   }
 }
+
+void drawStatusBar(SDL_Renderer *renderer, ChessFor2 *game, int windowWidth,
+                   int statusBarHeight, TTF_Font *font) {
+  static const SDL_Color White = {255, 255, 255};
+
+  auto const currentPlayer = game->getGameTurn()->getCurrentPlayer();
+  std::string const turnText =
+      std::string(currentPlayer == PieceColor::WHITE ? "Whites " : "Blacks ") +
+      "move";
+
+  // as TTF_RenderText_Solid could only be used on
+  // SDL_Surface then you have to create the surface first
+  SDL_Surface *surfaceMessage =
+      TTF_RenderText_Blended(font, turnText.c_str(), White);
+  // now you can convert it into a texture
+  SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+  int textW, textH;
+  TTF_SizeText(font, turnText.c_str(), &textW, &textH);
+
+  SDL_Rect Message_rect; // create a rect
+  Message_rect.x = windowWidth / 2 - textW / 2;
+  Message_rect.y = statusBarHeight / 2 - textH / 2;
+  Message_rect.w = textW;
+  Message_rect.h = textH;
+
+  SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+  SDL_DestroyTexture(Message);
+}
 }; // namespace
 
 GuiRenderHelper::GuiRenderHelper(SDL_Window *window, SDL_Renderer *renderer,
@@ -156,18 +186,25 @@ void GuiRenderHelper::updateDimensions() {
   m_windowW = w;
   m_windowH = h;
 
-  int const minSize = std::min(m_windowW, m_windowH);
+  int const minSize = std::min(m_windowW, m_windowH - STATUS_BAR_HEIGHT);
 
   m_tileSize = minSize / 8;
   m_tileStatusSize = m_tileSize * TILE_STATUS_SIZE;
   m_offsetX = (m_windowW - minSize) / 2;
-  m_offsetY = (m_windowH - minSize) / 2;
+  m_offsetY = m_windowH - minSize;
+}
+
+void GuiRenderHelper::initFonts() {
+  TTF_Init();
+  m_textFont = TTF_OpenFont("FreeSans.ttf", 24);
 }
 
 void GuiRenderHelper::drawChessBoard() {
   auto constexpr FPS{30};
 
   SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
+  initFonts();
 
   try {
     while (m_running) {
@@ -181,6 +218,9 @@ void GuiRenderHelper::drawChessBoard() {
 
       drawPieces(m_renderer, m_imgLoader.get(), m_game, m_offsetX, m_offsetY,
                  m_tileSize);
+
+      drawStatusBar(m_renderer, m_game, m_windowW, STATUS_BAR_HEIGHT,
+                    m_textFont);
 
       // Update the screen
       SDL_RenderPresent(m_renderer);

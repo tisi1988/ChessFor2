@@ -2,6 +2,7 @@
 
 #include "BaseUserIO.h"
 #include "ChessBoard.h"
+#include "GameTurn.h"
 #include "pieces/PieceColor.h"
 
 #include <atomic>
@@ -46,6 +47,11 @@ public:
    */
   Tile *getTile(Position const &pos);
 
+  /**
+   * @return the GameTurn instance.
+   */
+  GameTurn *getGameTurn() const;
+
 private:
   void updateMovingPiece(Position const &p);
   void changePlayerTurn();
@@ -59,7 +65,7 @@ private:
   // Game logic stuff
   Position m_selectedPiece;
   std::vector<Position> m_selectedPieceMoves;
-  PieceColor m_currentPlayer{PieceColor::WHITE};
+  std::unique_ptr<GameTurn> m_gameTurn;
 
   // Stuff to control game exit
   std::mutex m_exitMutex;

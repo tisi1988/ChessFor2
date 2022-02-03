@@ -28,7 +28,7 @@ enum PieceType {
 }
 
 class ChessFor2 {
-    - currentPlayer : PieceColor
+    + getGameTurn() : GameTurn
     + positionClicked(p:Position)
     + exitGame()
     + getTile(p : Position) : Tile*
@@ -139,5 +139,11 @@ class Position {
 
 ChessFor2 ..> Position
 
-
+class GameTurn {
+    - currentPlayer : PieceColor
+'   - remainingTime : Chrono
+    + getCurrentPlayer() : PieceColor
+    + changeTurn()
+}
+ChessFor2 "1" *-- "1" GameTurn
 @enduml

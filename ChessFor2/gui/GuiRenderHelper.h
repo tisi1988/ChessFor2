@@ -9,6 +9,7 @@ class ChessFor2;
 
 struct SDL_Window;
 struct SDL_Renderer;
+struct _TTF_Font;
 
 /**
  * @brief The GuiRenderHelper class implements the game rendering
@@ -48,10 +49,13 @@ public:
   int getTileSize() const;
 
 private:
+  static constexpr int STATUS_BAR_HEIGHT = 30;
+
   int getTileSideLength() const;
   std::pair<int, int> getDrawingOffsets() const;
   void drawChessBoard();
   void updateDimensions();
+  void initFonts();
 
   SDL_Window *m_window{nullptr};
   SDL_Renderer *m_renderer{nullptr};
@@ -67,6 +71,8 @@ private:
   int m_tileStatusSize{0};
   int m_offsetX{0};
   int m_offsetY{0};
+
+  _TTF_Font *m_textFont{nullptr};
 
   std::unique_ptr<PieceImgLoader> m_imgLoader;
 };
