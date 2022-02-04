@@ -7,6 +7,8 @@
  */
 class Position {
 public:
+  Position();
+
   /**
    * @brief Position constructor.
    * @param x X coordinate.
@@ -33,6 +35,6 @@ public:
   bool operator!=(Position const &other) const;
 
 private:
-  int m_x;
-  int m_y;
+  int m_x{-1};
+  int m_y{-1};
 };

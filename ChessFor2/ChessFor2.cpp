@@ -16,7 +16,7 @@ template <typename T> bool contains(std::vector<T> c, T const &v) {
 }
 } // namespace
 
-ChessFor2::ChessFor2() : m_selectedPiece(-1, -1) {
+ChessFor2::ChessFor2() {
   try {
     m_board = std::make_shared<ChessBoard>();
     m_gameTurn = std::make_unique<GameTurn>();
@@ -87,7 +87,7 @@ void ChessFor2::clearSelectedPiece() {
     m_board->getTile(p)->setStatus(TileStatus::NONE);
   }
 
-  m_selectedPiece = Position(-1, -1);
+  m_selectedPiece = Position();
   m_selectedPieceMoves.clear();
 }
 
