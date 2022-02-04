@@ -3,9 +3,11 @@
 #include "ChessBoard.h"
 #include "GameResult.h"
 #include "Position.h"
+#include "pieces/Piece.h"
 #include "pieces/PieceColor.h"
 
 #include <memory>
+#include <unordered_map>
 
 /**
  * @brief The GameAnalyzer class implements the Chess game analysis.
@@ -39,8 +41,25 @@ public:
    * @param src The positon where the piece is moving from.
    * @param dst The positon where the piece is moving to.
    */
-  void movePiece(Position const &src, Position const &dst) const;
+  void movePiece(Position const &src, Position const &dst);
 
 private:
+  void initializeRemainingPieces();
+
   std::weak_ptr<ChessBoard> m_board;
+
+  /**
+   * @brief The PieceHasher struct implement
+   * a hash function for Piece.
+   */
+  struct PieceHasher {
+    std::size_t operator()(Piece *p) const {
+      // A piece can be identified by its color and type
+      return static_cast<int>(p->getColor()) * 10 +
+             static_cast<int>(p->getType());
+    }
+  };
+
+  /// This is an index of the remaining pieces for each user
+  std::unordered_map<Piece *, Position, PieceHasher> m_piecesByPlayer[2];
 };

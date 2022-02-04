@@ -157,6 +157,7 @@ class GameAnalyzer {
     + checkGameOver(currentPlayer : PieceColor) : GameResult
     + checkMovement(src : Position, dst : Position) : Boolean
     + movePiece(src : Position, dst : Position)
+    - List<Map<Piece*, Position>> : m_piecesByPlayer
 }
 ChessFor2 "1" *-- "1" GameAnalyzer
 @enduml
