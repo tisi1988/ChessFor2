@@ -25,6 +25,12 @@ enum PieceType {
     KING
     PAWN
 }
+
+enum GameResult {
+    NONE,
+    DEFEAT,
+    DRAW
+}
 }
 
 class ChessFor2 {
