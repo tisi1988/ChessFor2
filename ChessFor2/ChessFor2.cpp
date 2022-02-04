@@ -18,8 +18,9 @@ template <typename T> bool contains(std::vector<T> c, T const &v) {
 
 ChessFor2::ChessFor2() : m_selectedPiece(-1, -1) {
   try {
-    m_board = std::make_unique<ChessBoard>();
+    m_board = std::make_shared<ChessBoard>();
     m_gameTurn = std::make_unique<GameTurn>();
+    m_gameAnalyzer = std::make_unique<GameAnalyzer>(m_board);
 
     // Create I/O at the end when the backend is ready
     m_io = std::make_unique<Gui>(this);
@@ -48,8 +49,12 @@ void ChessFor2::tileClicked(Position const &p) {
   Tile *clickedTile = m_board->getTile(p);
   if (contains(m_selectedPieceMoves, p)) {
     // The clicked tile belong to a candidate movements
-    moveSelectedPiece(p);
-    changePlayerTurn();
+    // Move the piece but first, clear everything about the
+    // the selection
+    auto const from = m_selectedPiece;
+    clearSelectedPiece();
+    m_gameAnalyzer->movePiece(from, p);
+    m_gameTurn->changeTurn();
   } else if (!clickedTile->isEmpty() && clickedTile->getPiece()->getColor() ==
                                             m_gameTurn->getCurrentPlayer()) {
     updateMovingPiece(p);
@@ -71,11 +76,6 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
   }
 
   setSelectedPiece(newSelectedPosition);
-}
-
-void ChessFor2::changePlayerTurn() {
-  m_selectedPiece = Position(-1, -1);
-  m_gameTurn->changeTurn();
 }
 
 void ChessFor2::clearSelectedPiece() {
@@ -105,18 +105,4 @@ void ChessFor2::setSelectedPiece(Position const &pos) {
     m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE
                                            : TileStatus::KILL_CANDIDATE);
   }
-}
-
-void ChessFor2::moveSelectedPiece(Position const &p) {
-  auto const src = m_selectedPiece;
-
-  clearSelectedPiece();
-
-  Tile *srcTile = m_board->getTile(src);
-  Piece *piece = srcTile->getPiece();
-  srcTile->clear();
-
-  Tile *dstTile = m_board->getTile(p);
-  dstTile->clear();
-  dstTile->setPiece(piece);
 }

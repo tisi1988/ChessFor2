@@ -152,4 +152,11 @@ class GameTurn {
     + changeTurn()
 }
 ChessFor2 "1" *-- "1" GameTurn
+
+class GameAnalyzer {
+    + checkGameOver(currentPlayer : PieceColor) : GameResult
+    + checkMovement(src : Position, dst : Position) : Boolean
+    + movePiece(src : Position, dst : Position)
+}
+ChessFor2 "1" *-- "1" GameAnalyzer
 @enduml

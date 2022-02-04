@@ -2,6 +2,7 @@
 
 #include "BaseUserIO.h"
 #include "ChessBoard.h"
+#include "GameAnalyzer.h"
 #include "GameTurn.h"
 #include "pieces/PieceColor.h"
 
@@ -12,9 +13,11 @@
 #include <vector>
 
 /**
- * @brief The ChessFor2 class contains the logic
- * of the game. Also is the facade between the UI
- * and the backend.
+ * @brief The ChessFor2 class is the facade between the UI
+ * and the backend. It handles the logic regarding the
+ * user interaction like selecting a piece to move, or
+ * update the Tile status to show the user the possible
+ * movements to do with that piece.
  */
 class ChessFor2 {
 public:
@@ -54,18 +57,17 @@ public:
 
 private:
   void updateMovingPiece(Position const &p);
-  void changePlayerTurn();
   void clearSelectedPiece();
   void setSelectedPiece(Position const &pos);
-  void moveSelectedPiece(Position const &p);
 
   std::unique_ptr<BaseUserIO> m_io;
-  std::unique_ptr<ChessBoard> m_board;
+  std::shared_ptr<ChessBoard> m_board;
 
   // Game logic stuff
   Position m_selectedPiece;
   std::vector<Position> m_selectedPieceMoves;
   std::unique_ptr<GameTurn> m_gameTurn;
+  std::unique_ptr<GameAnalyzer> m_gameAnalyzer;
 
   // Stuff to control game exit
   std::mutex m_exitMutex;
