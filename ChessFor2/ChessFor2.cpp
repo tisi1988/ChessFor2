@@ -94,12 +94,10 @@ void ChessFor2::clearSelectedPiece() {
 void ChessFor2::setSelectedPiece(Position const &pos) {
   m_selectedPiece = pos;
 
-  Tile *selectedTile = m_board->getTile(m_selectedPiece);
+  m_board->getTile(m_selectedPiece)->setStatus(TileStatus::SELECTED);
 
-  selectedTile->setStatus(TileStatus::SELECTED);
+  m_selectedPieceMoves = m_gameAnalyzer->getMoves(m_selectedPiece);
 
-  m_selectedPieceMoves =
-      selectedTile->getPiece()->getMoves(m_board.get(), m_selectedPiece);
   for (auto &&p : m_selectedPieceMoves) {
     auto const isEmpty = m_board->getTile(p)->isEmpty();
     m_board->getTile(p)->setStatus(isEmpty ? TileStatus::MOVE_CANDIDATE

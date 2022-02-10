@@ -40,6 +40,18 @@ void GameAnalyzer::movePiece(Position const &src, Position const &dst) {
   dstTile->setPiece(piece);
 }
 
+std::vector<Position> GameAnalyzer::getMoves(Position const &origin) const {
+  Tile *selectedTile = m_board.lock()->getTile(origin);
+
+  if (selectedTile->isEmpty()) {
+    return {};
+  }
+
+  // TODO Compute additional movements based on game data (like castling)
+
+  return selectedTile->getPiece()->getMoves(m_board.lock().get(), origin);
+}
+
 void GameAnalyzer::initializeRemainingPieces() {
   // This method is suppoed to be called right after the board is initialized
   // but just in case, let's scan the board instead

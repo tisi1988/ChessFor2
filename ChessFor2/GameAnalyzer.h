@@ -43,6 +43,15 @@ public:
    */
   void movePiece(Position const &src, Position const &dst);
 
+  /**
+   * @brief Computes the possible destination positions of the Piece present
+   * on a given position.
+   * @param origin Where the Piece is right now.
+   * @return the list of possible Position where the Piece can be moved to. If
+   * the given position is empty, returns an empty list of movements.
+   */
+  std::vector<Position> getMoves(Position const &origin) const;
+
 private:
   void initializeRemainingPieces();
 
