@@ -37,6 +37,7 @@ public:
    * @param board The chessboard instance.
    * @param origin Where the Piece is right now.
    * @return the list of possible Position where the Piece can be moved to.
+   * @note This method shall take into account pieces on the way.
    */
   virtual std::vector<Position> getMoves(ChessBoard *board,
                                          Position const &origin) const = 0;

@@ -3,6 +3,24 @@
 #include "Tile.h"
 #include "pieces/Piece.h"
 
+namespace {
+bool isInInitialTilePawn(int row, PieceColor color) {
+  static constexpr int BLACK_PAWN_INIT_ROW{1};
+  static constexpr int WHITE_PAWN_INIT_ROW{6};
+
+  return row == BLACK_PAWN_INIT_ROW && color == PieceColor::BLACK ||
+         row == WHITE_PAWN_INIT_ROW && color == PieceColor::WHITE;
+}
+
+bool isInInitialTileKing(int row, PieceColor color) {
+  static constexpr int BLACK_KING_INIT_ROW{0};
+  static constexpr int WHITE_KING_INIT_ROW{7};
+
+  return row == BLACK_KING_INIT_ROW && color == PieceColor::BLACK ||
+         row == WHITE_KING_INIT_ROW && color == PieceColor::WHITE;
+}
+} // namespace
+
 GameAnalyzer::GameAnalyzer(std::weak_ptr<ChessBoard> board) : m_board(board) {
   initializeRemainingPieces();
 }
@@ -47,9 +65,30 @@ std::vector<Position> GameAnalyzer::getMoves(Position const &origin) const {
     return {};
   }
 
-  // TODO Compute additional movements based on game data (like castling)
+  // These moves consider other pieces in the way of the chosen piece
+  // that can make the chosen piece not going further
+  auto pieceMoves =
+      selectedTile->getPiece()->getMoves(m_board.lock().get(), origin);
 
-  return selectedTile->getPiece()->getMoves(m_board.lock().get(), origin);
+  // Compute additional movements based on game data (like castling)
+  auto const pieceType = selectedTile->getPiece()->getType();
+  switch (pieceType) {
+  case PieceType::PAWN:
+    computeAdditionalMovesPawn(pieceMoves, origin);
+    break;
+  case PieceType::KING:
+    computeAdditionalMovesKing(pieceMoves, origin);
+    break;
+  case PieceType::BISHOP:
+  case PieceType::HORSE:
+  case PieceType::QUEEN:
+  case PieceType::TOWER:
+  default:
+    // These don't have any special movement
+    break;
+  }
+
+  return pieceMoves;
 }
 
 void GameAnalyzer::initializeRemainingPieces() {
@@ -67,4 +106,53 @@ void GameAnalyzer::initializeRemainingPieces() {
       m_piecesByPlayer[static_cast<int>(piece->getColor())][piece] = position;
     }
   }
+}
+
+void GameAnalyzer::computeAdditionalMovesPawn(std::vector<Position> &pieceMoves,
+                                              Position const &origin) const {
+
+  PieceColor color = m_board.lock()->getTile(origin)->getPiece()->getColor();
+  int const direction = color == PieceColor::BLACK ? 1 : -1;
+
+  // Pawns can move an extra tile forward if their in the initial tile
+  Position const secondTile =
+      Position(origin.getX() + 2 * direction, origin.getY());
+
+  if (isInInitialTilePawn(origin.getX(), color) &&
+      m_board.lock()->isValidPosition(secondTile) &&
+      !m_board.lock()->getTile(secondTile)->getPiece()) {
+    pieceMoves.push_back(secondTile);
+  }
+
+  // It also can move diagonally front-left if there's an enemy piece there
+  Position const fl =
+      Position(origin.getX() + 1 * direction, origin.getY() - 1);
+
+  if (isEnemyPieceOnPosition(color, fl)) {
+    pieceMoves.push_back(fl);
+  }
+
+  // It also can move diagonally front-right if there's an enemy piece there
+  Position const fr =
+      Position(origin.getX() + 1 * direction, origin.getY() + 1);
+
+  if (isEnemyPieceOnPosition(color, fr)) {
+    pieceMoves.push_back(fr);
+  }
+}
+
+void GameAnalyzer::computeAdditionalMovesKing(std::vector<Position> &pieceMoves,
+                                              Position const &origin) const {
+  // TODO
+}
+
+bool GameAnalyzer::isEnemyPieceOnPosition(PieceColor playing,
+                                     Position const &pos) const {
+  Tile *tile{nullptr};
+
+  if (m_board.lock()->isValidPosition(pos)) {
+    tile = m_board.lock()->getTile(pos);
+  }
+
+  return tile && !tile->isEmpty() && tile->getPiece()->getColor() != playing;
 }

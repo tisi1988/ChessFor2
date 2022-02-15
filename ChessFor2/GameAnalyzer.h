@@ -54,6 +54,11 @@ public:
 
 private:
   void initializeRemainingPieces();
+  void computeAdditionalMovesPawn(std::vector<Position> &pieceMoves,
+                                  Position const &origin) const;
+  void computeAdditionalMovesKing(std::vector<Position> &pieceMoves,
+                                  Position const &origin) const;
+  bool isEnemyPieceOnPosition(PieceColor playing, Position const &pos) const;
 
   std::weak_ptr<ChessBoard> m_board;
 
