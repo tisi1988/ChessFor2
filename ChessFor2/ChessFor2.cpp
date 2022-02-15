@@ -81,9 +81,7 @@ void ChessFor2::updateMovingPiece(Position const &newSelectedPosition) {
 void ChessFor2::clearSelectedPiece() {
   Tile *prevSelectedTile = m_board->getTile(m_selectedPiece);
   prevSelectedTile->setStatus(TileStatus::NONE);
-  auto prevCandidateMoves =
-      prevSelectedTile->getPiece()->getMoves(m_board.get(), m_selectedPiece);
-  for (auto &&p : prevCandidateMoves) {
+  for (auto &&p : m_selectedPieceMoves) {
     m_board->getTile(p)->setStatus(TileStatus::NONE);
   }
 
