@@ -1,5 +1,7 @@
 #pragma once
 
+#include "NetCfg.h"
+
 #include <atomic>
 #include <functional>
 #include <thread>
@@ -24,4 +26,6 @@ private:
 
   std::atomic_bool m_running{true};
   std::thread m_inputThread;
+
+  NetCfg m_netCfg;
 };

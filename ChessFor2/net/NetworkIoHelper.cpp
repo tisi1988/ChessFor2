@@ -1,6 +1,6 @@
 #include "NetworkIoHelper.h"
 
-#include <iostream>
+#include <stdexcept>
 
 NetworkIoHelper::NetworkIoHelper(std::function<void(int, int)> clickCb,
                                  std::function<void()> exitCb)
@@ -21,7 +21,14 @@ NetworkIoHelper::~NetworkIoHelper() {
 
 void NetworkIoHelper::inputLoop() {
 
-  // TODO
+  if (m_netCfg.getRole() == NetCfg::HOST) {
+    // Open a TCP socket to listen
+  } else {
+    auto const hostIp = m_netCfg.getGameHostIp();
+    // Open a TCP socket to host
+  }
 
+  while (m_running) {
+  }
   m_gameExitCallback();
 }
