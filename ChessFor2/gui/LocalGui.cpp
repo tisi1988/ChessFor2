@@ -1,4 +1,4 @@
-#include "Gui.h"
+#include "LocalGui.h"
 
 #include "GuiInputHelper.h"
 #include "GuiRenderHelper.h"
@@ -35,50 +35,9 @@ std::pair<int, int> windowCoordinateToTile(SDL_Window *boardWindow,
 
   return {(x - offsetX) / tileSize, (y - offsetY) / tileSize};
 }
-
-SDL_Window *createWindow() {
-  static constexpr int DEFAULT_WIDTH{600};
-  static constexpr int DEFAULT_HEIGHT{600};
-  static constexpr char const *WINDOW_TITLE{"ChessFor2"};
-
-  auto window = SDL_CreateWindow(
-      WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-      DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
-  if (!window) {
-    throw std::runtime_error("Could not create the window");
-  }
-
-  return window;
-}
-
-SDL_Renderer *createRenderer(SDL_Window *w) {
-  auto sdlRenderer = SDL_CreateRenderer(
-      w, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (!sdlRenderer) {
-    throw std::runtime_error("Could not create the renderer");
-  }
-
-  return sdlRenderer;
-}
 }; // namespace
 
-Gui::Gui(ChessFor2 *game) : BaseUserIO(game) {
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-    throw std::runtime_error("Error initialising SDL2");
-  }
-
-  /*
-   * NOTE: SDL is supposed to be consumed single-threaded!
-   *
-   * However, keeping the SDL initialization in the same thread
-   * that creates the Window and the Renderer makes it work.
-   *
-   * The event handling and drawing loops can then be run in
-   * separate threads.
-   */
-  m_window = createWindow();
-  m_renderer = createRenderer(m_window);
-
+LocalGui::LocalGui(ChessFor2 *game) : BaseGui(game) {
   m_render = std::make_unique<GuiRenderHelper>(m_window, m_renderer, game);
 
   auto rawClickCb = [this, game](int x, int y) {
@@ -97,11 +56,7 @@ Gui::Gui(ChessFor2 *game) : BaseUserIO(game) {
       rawClickCb, std::bind(&ChessFor2::exit, m_game));
 }
 
-Gui::~Gui() {
+LocalGui::~LocalGui() {
   m_render = nullptr;
   m_input = nullptr;
-
-  SDL_DestroyRenderer(m_renderer);
-  SDL_DestroyWindow(m_window);
-  SDL_Quit();
 }

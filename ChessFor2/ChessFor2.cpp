@@ -1,7 +1,9 @@
 #include "ChessFor2.h"
 
 #include "TileStatus.h"
-#include "gui/Gui.h"
+#include "gui/GameModeSelector.h"
+#include "gui/LocalGui.h"
+#include "gui/NetworkGui.h"
 #include "pieces/Piece.h"
 
 #include <algorithm>
@@ -22,8 +24,14 @@ ChessFor2::ChessFor2() {
     m_gameTurn = std::make_unique<GameTurn>();
     m_gameAnalyzer = std::make_unique<GameAnalyzer>(m_board);
 
+    auto const gameMode = GameModeSelector::ask();
+
     // Create I/O at the end when the backend is ready
-    m_io = std::make_unique<Gui>(this);
+    if (gameMode == GameModeSelector::LOCAL) {
+      m_io = std::make_unique<LocalGui>(this);
+    } else {
+      m_io = std::make_unique<NetworkGui>(this);
+    }
   } catch (std::runtime_error const &e) {
     std::cout << "Error initializing: " << e.what() << std::endl;
   }

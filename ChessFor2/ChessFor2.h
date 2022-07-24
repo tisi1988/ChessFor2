@@ -1,10 +1,9 @@
 #pragma once
 
-#include "BaseUserIO.h"
 #include "ChessBoard.h"
 #include "GameAnalyzer.h"
 #include "GameTurn.h"
-#include "pieces/PieceColor.h"
+#include "gui/BaseGui.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -60,7 +59,7 @@ private:
   void clearSelectedPiece();
   void setSelectedPiece(Position const &pos);
 
-  std::unique_ptr<BaseUserIO> m_io;
+  std::unique_ptr<BaseGui> m_io;
   std::shared_ptr<ChessBoard> m_board;
 
   // Game logic stuff
