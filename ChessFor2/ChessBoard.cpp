@@ -4,6 +4,7 @@
 
 #include <tuple>
 #include <vector>
+#include <stdexcept>
 
 ChessBoard::ChessBoard() { initializePieces(); }
 
